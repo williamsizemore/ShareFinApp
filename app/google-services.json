@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "962093176245",
+    "project_id": "sharefin-da932",
+    "storage_bucket": "sharefin-da932.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:962093176245:android:9ce849467decab8016f5fc",
+        "android_client_info": {
+          "package_name": "com.example.sharefinapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "962093176245-nseh2k8c75bg9torfgie8nrgkldoufp4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClijcAqipsTmohQpUQyR-nwoq_dzfMZxE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "962093176245-nseh2k8c75bg9torfgie8nrgkldoufp4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
