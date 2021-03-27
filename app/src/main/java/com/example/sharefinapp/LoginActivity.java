@@ -1,4 +1,4 @@
-package com.example.sharefinapp.ui.login;
+package com.example.sharefinapp;
 
 import android.app.Activity;
 
@@ -7,12 +7,14 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -25,6 +27,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.sharefinapp.ActivityFeed;
+import com.example.sharefinapp.FirebaseDBManager;
 import com.example.sharefinapp.R;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
@@ -66,9 +70,10 @@ public class LoginActivity extends AppCompatActivity {
                 new AuthUI.IdpConfig.GoogleBuilder().build());
 
         startActivityForResult(
-                AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).setTheme(R.style.Theme_ShareFinApp).
-                        build(),
-                RC_SIGN_IN);
+                AuthUI.getInstance().createSignInIntentBuilder().
+                        setAvailableProviders(providers).setTheme(R.style.Theme_ShareFinApp).build()
+                    ,RC_SIGN_IN);
+
     }
 
     @Override
@@ -81,7 +86,11 @@ public class LoginActivity extends AppCompatActivity {
             // if sign-in was successful
             if (resultCode == RESULT_OK)
             {
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//                FirebaseDBManager dbManager = new FirebaseDBManager(user);
+                Intent activityFeedIntent = new Intent(this, ActivityFeed.class);
+//                activityFeedIntent.putExtra("UserAuth", (Parcelable) dbManager);
+                startActivity(activityFeedIntent);
             }
         }
     }
