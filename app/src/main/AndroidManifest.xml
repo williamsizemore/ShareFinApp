@@ -9,9 +9,6 @@
         android:roundIcon="@mipmap/sf_launcher_icon"
         android:supportsRtl="true"
         android:theme="@style/Theme.ShareFinApp">
-        <meta-data
-            android:name="com.google.android.actions"
-            android:resource="@xml/fab_open" />
 
         <activity android:name=".CreateGroup" />
         <activity android:name=".CreateBill" />

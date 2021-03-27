@@ -16,14 +16,16 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 //import com.example.sharefinapp.ui.main.SectionsPagerAdapter;
 /* reference for FAB buttons: https://stackoverflow.com/questions/30699302/android-design-support-library-expandable-floating-action-buttonfab-menu */
 public class ActivityFeed extends AppCompatActivity implements View.OnClickListener {
     private boolean isFABOpen = false;
     private FloatingActionButton addGroupFAB, addBillFAB, addButton;
-    private LinearLayout addGroupFABLayout, addBillFABLayout, addButtonLayout;
-    private Animation fab_open, fab_close;
+    private TextView textViewAddBill, textViewAddGroup;
+    private Animation fab_open, fab_close, fab_clockwise, fab_counterClockwise;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,15 +37,19 @@ public class ActivityFeed extends AppCompatActivity implements View.OnClickListe
         tabs.setupWithViewPager(viewPager);
 
         /* add the floating action button functionality */
-        addButtonLayout = findViewById(R.id.fabAddButtonLayout);
-        addGroupFABLayout = findViewById(R.id.fabAddGroupLayout);
-        addBillFABLayout = findViewById(R.id.fabAddBillLayout);
-        addButton = (FloatingActionButton) findViewById(R.id.addButton);
-        addGroupFAB = findViewById(R.id.fabAddGroup);
-        addBillFAB = findViewById(R.id.fabAddBill);
+        textViewAddBill = findViewById(R.id.textView_addBill);    // mini FAB label
+        textViewAddGroup = findViewById(R.id.textView_addGroup);  // mini FAB label
+        addButton =  findViewById(R.id.addButton);              // main add button
+        addGroupFAB = findViewById(R.id.fabAddGroup);           // mini FAB
+        addBillFAB = findViewById(R.id.fabAddBill);             // mini FAB
+
+        /* setup the animations for the FAB buttons */
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_open);
         fab_close= AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_close);
+        fab_clockwise = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_rotate_clockwise);
+        fab_counterClockwise = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_rotation_anticlockwise);
 
+        /* set the onclick listeners to the method implemented in this class */
         addButton.setOnClickListener(this);
         addGroupFAB.setOnClickListener(this);
         addBillFAB.setOnClickListener(this);
@@ -82,28 +88,31 @@ public class ActivityFeed extends AppCompatActivity implements View.OnClickListe
         else closeFABMenu();
     }
 
+    // animate the mini FAB's display and make them clickable
     public void showFABMenu()
     {
+        textViewAddBill.setVisibility(View.VISIBLE);
+        textViewAddGroup.setVisibility(View.VISIBLE);
+        addButton.startAnimation(fab_clockwise);
 
-        addBillFABLayout.setVisibility(View.VISIBLE);
-        addGroupFABLayout.setVisibility(View.VISIBLE);
-        addButtonLayout.animate().rotationBy(135);
+        addGroupFAB.startAnimation(fab_open);
+        addBillFAB.startAnimation(fab_open);
 
-        addGroupFABLayout.startAnimation(fab_open);
-        addBillFABLayout.startAnimation(fab_open);
         addGroupFAB.setClickable(true);
         addBillFAB.setClickable(true);
         isFABOpen = true;
-
     }
 
+    // hide the mini FAB's and make them un-clickable
     public void closeFABMenu()
     {
-        addButtonLayout.animate().rotation(0);
+        textViewAddGroup.setVisibility(View.INVISIBLE);
+        textViewAddBill.setVisibility(View.INVISIBLE);
+
+        addButton.startAnimation(fab_counterClockwise);
         addGroupFAB.startAnimation(fab_close);
         addBillFAB.startAnimation(fab_close);
-        addGroupFABLayout.setVisibility(View.GONE);
-        addBillFABLayout.setVisibility(View.GONE);
+
         addGroupFAB.setClickable(false);
         addBillFAB.setClickable(false);
         isFABOpen = false;
