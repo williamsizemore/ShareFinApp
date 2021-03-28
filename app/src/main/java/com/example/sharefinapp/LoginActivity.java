@@ -36,6 +36,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -86,10 +87,12 @@ public class LoginActivity extends AppCompatActivity {
             // if sign-in was successful
             if (resultCode == RESULT_OK)
             {
-//                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//                FirebaseDBManager dbManager = new FirebaseDBManager(user);
+                if (response.isNewUser() == true)
+                {
+                    FirebaseDBManager.getInstance().addNewUserData();   // if its a new user, then add their info in the database
+                }
                 Intent activityFeedIntent = new Intent(this, ActivityFeed.class);
-//                activityFeedIntent.putExtra("UserAuth", (Parcelable) dbManager);
+
                 startActivity(activityFeedIntent);
             }
         }
