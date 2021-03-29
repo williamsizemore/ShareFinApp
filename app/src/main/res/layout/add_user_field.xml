@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+
+
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditText
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/textField_left"
+
+        android:hint="@string/addUserToGroup"
+        android:layout_weight="8"
+        />
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginRight="@dimen/FAB_21"
+        android:onClick="onDeleteUserFromGroupCreation"
+        android:background="@drawable/remove_user_icon"
+
+        />
+</LinearLayout>

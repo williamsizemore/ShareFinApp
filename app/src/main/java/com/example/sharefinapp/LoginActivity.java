@@ -1,45 +1,23 @@
 package com.example.sharefinapp;
 
-import android.app.Activity;
-
 import androidx.annotation.NonNull;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Parcelable;
-import android.os.PersistableBundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.sharefinapp.ActivityFeed;
-import com.example.sharefinapp.FirebaseDBManager;
-import com.example.sharefinapp.R;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
@@ -86,10 +64,10 @@ public class LoginActivity extends AppCompatActivity {
 
             // if sign-in was successful
             if (resultCode == RESULT_OK)
-            {
+            {   Log.v("isNewUser", String.valueOf(response.isNewUser()));
                 if (response.isNewUser() == true)
                 {
-                    FirebaseDBManager.getInstance().addNewUserData();   // if its a new user, then add their info in the database
+                    DBManager.getInstance().addNewUserData();   // if its a new user, then add their info in the database
                 }
                 Intent activityFeedIntent = new Intent(this, ActivityFeed.class);
 

@@ -1,13 +1,24 @@
 package com.example.sharefinapp;
 
 public class User {
-    private String userID, userEmail, firstName, lastName;
+    private String userID;
+    private String userEmail;
+    private String displayName;
 
-    public User(String userID, String userEmail, String firstName, String lastName) {
+    private String photoURI;
+
+    public User(String userID, String userEmail, String displayName) {
         this.userID = userID;
         this.userEmail = userEmail;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.displayName = displayName;
+        this.photoURI = ""; // set this to an empty string by default, but allow photos to be uploaded later
+    }
+    public String getPhotoURI() {
+        return photoURI;
+    }
+
+    public void setPhotoURI(String photoURI) {
+        this.photoURI = photoURI;
     }
 
     public String getUserID() {
@@ -26,19 +37,12 @@ public class User {
         this.userEmail = userEmail;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
 }

@@ -25,4 +25,8 @@
         <item>$</item>
         <item>%</item>
     </string-array>
+    <string name="addUserToGroup">user@gmail.com</string>
+    <string name="create_group">Create Group</string>
+    <string name="add_members">Add Members</string>
+    <string name="group_name">Group Name</string>
 </resources>

@@ -19,4 +19,9 @@
 
     <dimen name="standard_12">12dp</dimen>
     <dimen name="standard_23">23dp</dimen>
+
+    <dimen name="textField_left">25dp</dimen>
+    <dimen name="textField_right">25dp</dimen>
+    <dimen name="buttonWidth">200dp</dimen>
+    <dimen name="buttonHeight">50dp</dimen>
 </resources>
