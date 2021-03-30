@@ -59,6 +59,7 @@ public class ActivityFeed extends AppCompatActivity implements View.OnClickListe
 
 
     }
+
     @Override
     public void onClick (View v) {
         int id = v.getId();
@@ -72,7 +73,7 @@ public class ActivityFeed extends AppCompatActivity implements View.OnClickListe
             case R.id.fabAddGroup:
                 Log.v("addGroup","Add Group was selected");
                 Intent createGroupIntent = new Intent(this, CreateGroup.class);
-                startActivity(createGroupIntent);
+                startActivityForResult(createGroupIntent,RESULT_OK);
                 break;
             case R.id.fabAddBill:
                 Log.v("addBill","Add bill was selected");
@@ -108,7 +109,6 @@ public class ActivityFeed extends AppCompatActivity implements View.OnClickListe
     // hide the mini FAB's and make them un-clickable
     public void closeFABMenu()
     {
-
         addButton.startAnimation(fab_counterClockwise);
         addGroupFAB.startAnimation(fab_close);
         addBillFAB.startAnimation(fab_close);
@@ -119,4 +119,6 @@ public class ActivityFeed extends AppCompatActivity implements View.OnClickListe
         addBillFAB.setClickable(false);
         isFABOpen = false;
     }
+
+
 }

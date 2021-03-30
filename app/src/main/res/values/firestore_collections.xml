@@ -1,0 +1,8 @@
+<resources>
+    <!-- name of the collections used in the firestore database -->
+    <string name="users_path">users</string>
+    <string name="groups_path">groups</string>
+    <string name="bills_path">bills</string>
+    <string name="payments_path">payments</string>
+    <string name="bill_split_path">billSplit</string>
+</resources>
