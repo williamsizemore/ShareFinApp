@@ -7,26 +7,35 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 
 public class ActivityFeedAdapter extends FragmentPagerAdapter {
+    private final Context context;
+    private final int tabCount;
 
-    private static final int GROUPS = 0;
-    private static final int BILLS = 1;
 
-    private static final int[] TABS = new int[]{GROUPS, BILLS};
-    private Context mContext;
-
-    public ActivityFeedAdapter(@NonNull FragmentManager fm, int behavior) {
-        super(fm, behavior);
+    public ActivityFeedAdapter(Context context, FragmentManager fm, int tabCount) {
+        super(fm);
+        this.context = context;
+        this.tabCount = tabCount;
     }
 
 
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        return null;
+        switch (position)
+        {
+            case 0:
+                GroupFragment groupFragment = new GroupFragment();
+                return groupFragment;
+            case 1:
+                BillsFragment billsFragment = new BillsFragment();
+                return billsFragment;
+            default:
+                return null;
+        }
     }
 
     @Override
     public int getCount() {
-        return 0;
+        return tabCount;
     }
 }

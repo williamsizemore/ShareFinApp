@@ -22,20 +22,28 @@
             android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title" />
 
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabs"
+            android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary" >
 
             <com.google.android.material.tabs.TabItem android:layout_height="match_parent"
-                android:layout_width="match_parent">
-                android:text="@strings/tab_text_1"
+                android:layout_width="match_parent"
+                android:text="@string/tab_text_1">
+
             </com.google.android.material.tabs.TabItem>
             <com.google.android.material.tabs.TabItem android:layout_height="match_parent"
-                android:layout_width="match_parent">
-                android:text="@strings/tab_text_1"
+                android:layout_width="match_parent"
+                android:text="@string/tab_text_2">
+
             </com.google.android.material.tabs.TabItem>
         </com.google.android.material.tabs.TabLayout>
+
+        <androidx.viewpager.widget.ViewPager
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintTop_toBottomOf="@+id/tabLayout"
+            />
 
     </com.google.android.material.appbar.AppBarLayout>
 

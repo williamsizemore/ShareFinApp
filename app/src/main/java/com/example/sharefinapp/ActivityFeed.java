@@ -1,23 +1,20 @@
 package com.example.sharefinapp;
 
-import android.animation.Animator;
 import android.content.Intent;
 import android.os.Bundle;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
-
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import static android.widget.TableLayout.*;
+import static com.google.android.material.tabs.TabLayout.GRAVITY_FILL;
 
 //import com.example.sharefinapp.ui.main.SectionsPagerAdapter;
 /* reference for FAB buttons: https://stackoverflow.com/questions/30699302/android-design-support-library-expandable-floating-action-buttonfab-menu */
@@ -31,11 +28,13 @@ public class ActivityFeed extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
-//        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
+
+        /* setup the TabLayout tabs */
         ViewPager viewPager = findViewById(R.id.view_pager);
-//        viewPager.setAdapter(sectionsPagerAdapter);
-        TabLayout tabs = findViewById(R.id.tabs);
-        tabs.setupWithViewPager(viewPager);
+        TabLayout tabLayout = findViewById(R.id.tabLayout);
+        tabLayout.setupWithViewPager(viewPager);
+
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         /* add the floating action button functionality */
         textViewAddBill = findViewById(R.id.textView_addBill);    // mini FAB label
@@ -43,6 +42,8 @@ public class ActivityFeed extends AppCompatActivity implements View.OnClickListe
         addButton =  findViewById(R.id.addButton);              // main add button
         addGroupFAB = findViewById(R.id.fabAddGroup);           // mini FAB
         addBillFAB = findViewById(R.id.fabAddBill);             // mini FAB
+
+        final ActivityFeedAdapter = new ActivityFeedAdapter(this, getSupportFragmentManager(), tabLayout.getTabCount());
 
         /* setup the animations for the FAB buttons */
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_open);
