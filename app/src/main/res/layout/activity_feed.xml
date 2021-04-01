@@ -25,7 +25,9 @@
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary" >
+            android:background="?attr/colorPrimary"
+            app:tabTextColor="@color/white"
+            app:tabIndicatorColor="@color/colorAccent">
 
             <com.google.android.material.tabs.TabItem android:layout_height="match_parent"
                 android:layout_width="match_parent"
@@ -39,19 +41,11 @@
             </com.google.android.material.tabs.TabItem>
         </com.google.android.material.tabs.TabLayout>
 
-        <androidx.viewpager.widget.ViewPager
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintTop_toBottomOf="@+id/tabLayout"
-            />
+
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/view_pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
 
     <!-- add bill layout -->
     <TextView

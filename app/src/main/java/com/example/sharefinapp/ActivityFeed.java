@@ -3,10 +3,17 @@ package com.example.sharefinapp;
 import android.content.Intent;
 import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.auth.FirebaseAuth;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
+
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -30,11 +37,32 @@ public class ActivityFeed extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_feed);
 
         /* setup the TabLayout tabs */
-        ViewPager viewPager = findViewById(R.id.view_pager);
-        TabLayout tabLayout = findViewById(R.id.tabLayout);
-        tabLayout.setupWithViewPager(viewPager);
-
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+//        FragmentManager fm = getSupportFragmentManager();
+//        ViewPager2 viewPager = findViewById(R.id.fragment_activity_feed_viewpager);
+//        TabLayout tabLayout = findViewById(R.id.tabLayout);
+//        ActivityFeedAdapter activityFeedAdapter = new ActivityFeedAdapter(getApplicationContext(), 2);
+////        tabLayout.setupWithViewPager(viewPager);
+//        tabLayout.addTab(tabLayout.newTab().setText("Groups"));
+//        tabLayout.addTab(tabLayout.newTab().setText("Bills"));
+//        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+//            @Override
+//            public void onTabSelected(TabLayout.Tab tab) {
+//                viewPager.setCurrentItem(tab.getPosition());
+//            }
+//
+//            @Override
+//            public void onTabUnselected(TabLayout.Tab tab) {
+//
+//            }
+//
+//            @Override
+//            public void onTabReselected(TabLayout.Tab tab) {
+//
+//            }
+//
+//        });
+//
+//        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         /* add the floating action button functionality */
         textViewAddBill = findViewById(R.id.textView_addBill);    // mini FAB label
@@ -43,7 +71,8 @@ public class ActivityFeed extends AppCompatActivity implements View.OnClickListe
         addGroupFAB = findViewById(R.id.fabAddGroup);           // mini FAB
         addBillFAB = findViewById(R.id.fabAddBill);             // mini FAB
 
-        final ActivityFeedAdapter = new ActivityFeedAdapter(this, getSupportFragmentManager(), tabLayout.getTabCount());
+//        final ActivityFeedAdapter activityFeedAdapter= new ActivityFeedAdapter(this,  tabLayout.getTabCount());
+//        viewPager.setAdapter(activityFeedAdapter);
 
         /* setup the animations for the FAB buttons */
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_open);
