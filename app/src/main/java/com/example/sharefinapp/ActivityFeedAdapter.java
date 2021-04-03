@@ -1,25 +1,26 @@
 package com.example.sharefinapp;
 
 import android.content.Context;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.lifecycle.Lifecycle;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
+
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 
 
 public class ActivityFeedAdapter extends FragmentStateAdapter {
 
-    private final int tabCount;
-    private final Context context;
 
-    public ActivityFeedAdapter(Context context, int tabCount) {
-        super((FragmentActivity) context);
-        this.context = context;
-        this.tabCount = tabCount;
+    public ActivityFeedAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
+        super(fragmentManager, lifecycle);
     }
 
     @NonNull
@@ -28,18 +29,20 @@ public class ActivityFeedAdapter extends FragmentStateAdapter {
         switch (position)
         {
             case 0:
-                GroupFragment groupFragment = new GroupFragment();
-                return groupFragment;
+                return new GroupFragment();
             case 1:
-                BillsFragment billsFragment = new BillsFragment();
-                return billsFragment;
+                return new BillsFragment();
             default:
                 return null;
         }
     }
 
+
     @Override
     public int getItemCount() {
-        return tabCount;
+        return 2;
     }
+
+
+
 }

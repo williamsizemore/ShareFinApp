@@ -5,12 +5,9 @@ import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.auth.FirebaseAuth;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
-import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -19,9 +16,6 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
-
-import static android.widget.TableLayout.*;
-import static com.google.android.material.tabs.TabLayout.GRAVITY_FILL;
 
 //import com.example.sharefinapp.ui.main.SectionsPagerAdapter;
 /* reference for FAB buttons: https://stackoverflow.com/questions/30699302/android-design-support-library-expandable-floating-action-buttonfab-menu */
@@ -37,31 +31,39 @@ public class ActivityFeed extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_feed);
 
         /* setup the TabLayout tabs */
-//        FragmentManager fm = getSupportFragmentManager();
-//        ViewPager2 viewPager = findViewById(R.id.fragment_activity_feed_viewpager);
-//        TabLayout tabLayout = findViewById(R.id.tabLayout);
-//        ActivityFeedAdapter activityFeedAdapter = new ActivityFeedAdapter(getApplicationContext(), 2);
-////        tabLayout.setupWithViewPager(viewPager);
-//        tabLayout.addTab(tabLayout.newTab().setText("Groups"));
-//        tabLayout.addTab(tabLayout.newTab().setText("Bills"));
-//        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-//            @Override
-//            public void onTabSelected(TabLayout.Tab tab) {
-//                viewPager.setCurrentItem(tab.getPosition());
-//            }
-//
-//            @Override
-//            public void onTabUnselected(TabLayout.Tab tab) {
-//
-//            }
-//
-//            @Override
-//            public void onTabReselected(TabLayout.Tab tab) {
-//
-//            }
-//
-//        });
-//
+        FragmentManager fm = getSupportFragmentManager();
+        ActivityFeedAdapter activityFeedAdapter = new ActivityFeedAdapter(fm, getLifecycle());
+        final ViewPager2 viewPager = findViewById(R.id.view_pager_activity_feed);
+        viewPager.setAdapter(activityFeedAdapter);
+
+
+        TabLayout tabLayout = findViewById(R.id.tabLayout);
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+
+        });
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position)
+            {
+                tabLayout.selectTab(tabLayout.getTabAt(position));
+            }
+        });
+
 //        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         /* add the floating action button functionality */
@@ -85,7 +87,7 @@ public class ActivityFeed extends AppCompatActivity implements View.OnClickListe
         addGroupFAB.setOnClickListener(this);
         addBillFAB.setOnClickListener(this);
 
-        Log.v("user",FirebaseAuth.getInstance().getCurrentUser().toString());
+
 
 
     }

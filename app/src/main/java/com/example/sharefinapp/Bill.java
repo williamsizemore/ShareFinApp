@@ -26,6 +26,11 @@ public class Bill {
         this.remindDate = remindDate;
     }
 
+    // needed for compatibility with Firestore
+    public Bill () {
+
+    }
+
     public String getCategory() {
         return category;
     }

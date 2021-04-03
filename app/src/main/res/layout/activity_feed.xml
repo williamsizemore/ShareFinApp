@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ActivityFeed">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
+        android:id="@+id/activity_feed_appbar_layout"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.ShareFinApp.AppBarOverlay">
+        android:theme="@style/Theme.ShareFinApp.AppBarOverlay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/title"
@@ -26,72 +31,92 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
-            app:tabTextColor="@color/white"
-            app:tabIndicatorColor="@color/colorAccent">
+            app:tabIndicatorColor="@color/colorAccent"
+            app:tabTextColor="@color/white">
 
-            <com.google.android.material.tabs.TabItem android:layout_height="match_parent"
-                android:layout_width="match_parent"
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/tab_text_1">
 
             </com.google.android.material.tabs.TabItem>
-            <com.google.android.material.tabs.TabItem android:layout_height="match_parent"
-                android:layout_width="match_parent"
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/tab_text_2">
 
             </com.google.android.material.tabs.TabItem>
         </com.google.android.material.tabs.TabLayout>
 
-
-
     </com.google.android.material.appbar.AppBarLayout>
 
 
-
     <!-- add bill layout -->
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager_activity_feed"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.38"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_feed_appbar_layout"
+        app:layout_constraintVertical_bias="0.0" />
+
     <TextView
+        android:id="@+id/textView_addBill"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="20dp"
         android:text="Create New Bill"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="@dimen/FAB_186"
-        android:layout_marginEnd="@dimen/FAB_88"
         android:visibility="invisible"
-        android:id="@+id/textView_addBill"/>
+        app:layout_constraintEnd_toStartOf="@+id/fabAddBill"
+        app:layout_constraintTop_toTopOf="@+id/fabAddBill" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddBill"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/fab_margin"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="@dimen/FAB_176"
-        android:layout_marginEnd="@dimen/FAB_24"
+        android:layout_marginEnd="19dp"
+        android:layout_marginRight="19dp"
+        android:layout_marginBottom="171dp"
         android:visibility="invisible"
         app:fabSize="mini"
-        app:srcCompat="@drawable/addbill_icon" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/addbill_icon"
+        android:contentDescription="TODO" />
 
 
     <!-- Add Group layout -->
     <TextView
+        android:id="@+id/textView_addGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
         android:text="Create New Group"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="@dimen/FAB_116"
-        android:layout_marginEnd="@dimen/FAB_88"
         android:visibility="invisible"
-        android:id="@+id/textView_addGroup"/>
+        app:layout_constraintEnd_toStartOf="@+id/fabAddGroup"
+        app:layout_constraintTop_toTopOf="@+id/fabAddGroup" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="@dimen/FAB_106"
-        android:layout_marginEnd="@dimen/FAB_24"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="19dp"
+        android:layout_marginRight="19dp"
         android:visibility="invisible"
         app:fabSize="mini"
-        app:srcCompat="@drawable/addgroup_icon"        />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fabAddBill"
+        app:srcCompat="@drawable/addgroup_icon" />
 
 
     <!-- Add button layout -->
@@ -100,11 +125,14 @@
         android:id="@+id/addButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
         android:gravity="center_vertical"
-        android:layout_margin="@dimen/fab_margin"
         app:fabSize="normal"
-        app:srcCompat="@android:drawable/ic_input_add"
-        />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@android:drawable/ic_input_add" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

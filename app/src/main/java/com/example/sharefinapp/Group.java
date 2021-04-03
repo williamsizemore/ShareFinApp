@@ -10,6 +10,8 @@ public class Group {
         this.groupName = groupName;
         this.groupUsers = groupUsers;
     }
+    // for firestore compatibility
+    public Group() {}
 
     public String getGroupName() {
         return groupName;

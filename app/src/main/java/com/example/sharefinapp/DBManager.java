@@ -2,12 +2,13 @@ package com.example.sharefinapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.*;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 
-public class DBManager extends AppCompatActivity implements DbManagerInterface {
+public class DBManager extends AppCompatActivity {
     private final FirebaseAuth fbAuth;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final FirebaseUser user;
@@ -39,7 +40,7 @@ public class DBManager extends AppCompatActivity implements DbManagerInterface {
           @collectionPath - the collection to be added to
           @document - the ID of the object/document for the collection
           @data - the object to be uploaded as the document
-       */
+     */
     public void insertData(String collectionPath, String document, Object data)
     {
         db.collection(collectionPath).document(document).set(data);
@@ -73,5 +74,12 @@ public class DBManager extends AppCompatActivity implements DbManagerInterface {
         boolean exists = db.collection("users").document(userEmail).get().isSuccessful();
         return exists;
     }
+
+//    public Query queryDb(String collection, String whereEqualTo)
+//    {
+////        todo implement
+//
+//        return new Query;
+//    }
 
 }

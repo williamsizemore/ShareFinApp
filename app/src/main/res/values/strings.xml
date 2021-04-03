@@ -22,12 +22,13 @@
         <item>Shopping</item>
     </string-array>
     <string-array name="bill_split_type">
-        <item>$</item>
-        <item>%</item>
+        <item>$ split by amount</item>
+        <item>% split by percentage</item>
     </string-array>
     <string name="addUserToGroup">user@gmail.com</string>
     <string name="create_group">Create Group</string>
     <string name="add_members">Add Members</string>
     <string name="group_name">Group Name</string>
+    <string name="reminder_date">MM/DD/YYYY</string>
 
 </resources>
