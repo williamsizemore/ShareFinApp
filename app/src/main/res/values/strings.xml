@@ -30,5 +30,6 @@
     <string name="add_members">Add Members</string>
     <string name="group_name">Group Name</string>
     <string name="reminder_date">MM/DD/YYYY</string>
+    <string name="create_bill_action_bar_text">Create Bill</string>
 
 </resources>

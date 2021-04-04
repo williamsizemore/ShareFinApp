@@ -1,11 +1,23 @@
 package com.example.sharefinapp;
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.*;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.UploadTask;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class DBManager extends AppCompatActivity {
@@ -53,7 +65,8 @@ public class DBManager extends AppCompatActivity {
      */
     public void insertData(String collectionPath, Object data)
     {
-        db.collection(collectionPath).add(data);
+//        db.collection(collectionPath).add(data);
+
     }
 
     public String getCurrentUserEmail()
@@ -75,11 +88,42 @@ public class DBManager extends AppCompatActivity {
         return exists;
     }
 
-//    public Query queryDb(String collection, String whereEqualTo)
-//    {
-////        todo implement
-//
-//        return new Query;
-//    }
+    // get all groups associated with the user
+    public ArrayList<Object> getGroups() {
+        ArrayList<Object> objects = new ArrayList<>();
+
+        db.collection("groups").whereArrayContains("groupUsers", getCurrentUserEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot doc : task.getResult())
+                    {
+                        objects.add(doc.toObject(Object.class));
+                    }
+                }
+                else
+                    Log.d("getGroups Query", String.valueOf(task.getException()));
+            }
+        });
+//        Log.v("getGroups return values: ", groups.get(0).getGroupName().toString());
+        return objects;
+
+    }
+    // get the specified group associated with the current user
+    public Group getGroup(String groupName)
+    {
+        ArrayList<Group> group = new ArrayList<>();
+        db.collection("groups").whereArrayContains("groupUsers",getCurrentUserEmail()).whereEqualTo("groupName", groupName).limit(1).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    group.add(doc.toObject(Group.class));
+                }
+
+            }
+        });
+        return group.get(0);
+    }
 
 }
