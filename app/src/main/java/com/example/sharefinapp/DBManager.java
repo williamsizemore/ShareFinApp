@@ -43,6 +43,18 @@ public class DBManager extends AppCompatActivity {
         return user;
     }
 
+    public ArrayList<User> getUsers(List<String> userEmails){
+        ArrayList<User> userList = new ArrayList<>();
+
+        Task<QuerySnapshot> query = db.collection("users").whereArrayContainsAny("userEmail",userEmails).get();
+        while(!query.isComplete());
+
+        userList.forEach(x -> query.getResult().toObjects(User.class));
+        Log.v("getUsers - attempting to add User objects: ", userList.toArray().toString());
+
+        return userList;
+    }
+
     public FirebaseFirestore getDb() {
         return db;
     }   // todo potentially remove?
@@ -65,8 +77,7 @@ public class DBManager extends AppCompatActivity {
      */
     public void insertData(String collectionPath, Object data)
     {
-//        db.collection(collectionPath).add(data);
-
+        db.collection(collectionPath).add(data);
     }
 
     public String getCurrentUserEmail()
@@ -88,11 +99,11 @@ public class DBManager extends AppCompatActivity {
         return exists;
     }
 
-    // get all groups associated with the user
-    public ArrayList<Object> getGroups() {
+    // get all groups associated with the user // WARNING: query is asynchronous and may return before populating return values
+    public ArrayList<Object> getObjects(String collectionPath, String field, String fieldValue) {
         ArrayList<Object> objects = new ArrayList<>();
 
-        db.collection("groups").whereArrayContains("groupUsers", getCurrentUserEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection(collectionPath).whereArrayContains(field, fieldValue).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
@@ -105,10 +116,9 @@ public class DBManager extends AppCompatActivity {
                     Log.d("getGroups Query", String.valueOf(task.getException()));
             }
         });
-//        Log.v("getGroups return values: ", groups.get(0).getGroupName().toString());
         return objects;
-
     }
+
     // get the specified group associated with the current user
     public Group getGroup(String groupName)
     {

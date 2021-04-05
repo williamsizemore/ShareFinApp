@@ -1,6 +1,8 @@
 package com.example.sharefinapp;
 
-import com.google.type.DateTime;
+
+import java.util.Date;
+import java.util.HashMap;
 
 /*
     Bill object
@@ -8,22 +10,23 @@ import com.google.type.DateTime;
 public class Bill {
     private String  category, description, splitType, name;
     private String photoURI;
-    private String groupRef;
-    private float amountDue, amountPaid;
-    private DateTime createDate, remindDate;
-    private boolean recurring;
-    private String recurringPeriodicity;
+    private String groupName;
+    private double amountDue, amountPaid;
+    private Date createDate, remindDate;
+    private String recurring;
+    private HashMap<String, Double> billSplit;
 
-    public Bill(String category, String description, String splitType, String name, String groupRef, float amountDue, float amountPaid, DateTime createDate, DateTime remindDate) {
+    public Bill(String category, String description, String splitType, String name, String groupName, double amountDue, double amountPaid, Date createDate, Date remindDate, HashMap<String, Double> billSplit) {
         this.category = category;
         this.description = description;
         this.splitType = splitType;
         this.name = name;
-        this.groupRef = groupRef;
+        this.groupName = groupName;
         this.amountDue = amountDue;
         this.amountPaid = amountPaid;
         this.createDate = createDate;
         this.remindDate = remindDate;
+        this.billSplit = billSplit;
     }
 
     // needed for compatibility with Firestore
@@ -71,59 +74,59 @@ public class Bill {
         this.photoURI = photoURI;
     }
 
-    public String getGroupRef() {
-        return groupRef;
+    public String getGroupName() {
+        return groupName;
     }
 
-    public void setGroupRef(String groupRef) {
-        this.groupRef = groupRef;
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
-    public float getAmountDue() {
+    public double getAmountDue() {
         return amountDue;
     }
 
-    public void setAmountDue(float amountDue) {
+    public void setAmountDue(double amountDue) {
         this.amountDue = amountDue;
     }
 
-    public float getAmountPaid() {
+    public double getAmountPaid() {
         return amountPaid;
     }
 
-    public void setAmountPaid(float amountPaid) {
+    public void setAmountPaid(double amountPaid) {
         this.amountPaid = amountPaid;
     }
 
-    public DateTime getCreateDate() {
+    public Date getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(DateTime createDate) {
+    public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
 
-    public DateTime getRemindDate() {
+    public Date getRemindDate() {
         return remindDate;
     }
 
-    public void setRemindDate(DateTime remindDate) {
+    public void setRemindDate(Date remindDate) {
         this.remindDate = remindDate;
     }
 
-    public boolean isRecurring() {
+    public String isRecurring() {
         return recurring;
     }
 
-    public void setRecurring(boolean recurring) {
+    public void setRecurring(String recurring) {
         this.recurring = recurring;
     }
 
-    public String getRecurringPeriodicity() {
-        return recurringPeriodicity;
+    public HashMap<String, Double> getBillSplit() {
+        return billSplit;
     }
 
-    public void setRecurringPeriodicity(String recurringPeriodicity) {
-        this.recurringPeriodicity = recurringPeriodicity;
+    public void setBillSplit(HashMap<String, Double> billSplit) {
+        this.billSplit = billSplit;
     }
 }

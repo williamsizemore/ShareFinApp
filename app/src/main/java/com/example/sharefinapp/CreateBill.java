@@ -9,28 +9,42 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.firebase.ui.firestore.FirestoreArray;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.lang.reflect.Array;
+import java.util.Date;
+import com.google.type.DateTime;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Map;
+import java.util.HashMap;
 
 public class CreateBill extends AppCompatActivity {
 
     private final Calendar calendar = Calendar.getInstance();
-    private EditText reminderDate;
+    private EditText reminderDateField, billNameField,amountField;
+    private TextView user1, user2, user3, user4,user5;
+    private EditText user1amount, user2amount, user3amount, user4amount, user5amount;
+    private Spinner categoryField, recurrenceField, groupField, splitTypeField;
+    private ArrayList<Group> groups;
+    private ArrayList<User> users;
+    private DatePickerDialog.OnDateSetListener date;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,9 +56,11 @@ public class CreateBill extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);  // add the back arrow button
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setCustomView(R.layout.create_bill_action_bar);    //todo change out to do a custom action bar with save icon included
+        groupField = findViewById(R.id.create_bill_group_spinner);
 
-        reminderDate = findViewById(R.id.create_bill_reminder_date);
-        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+        reminderDateField = findViewById(R.id.create_bill_reminder_date);
+        date = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 calendar.set(Calendar.YEAR, year);
@@ -54,23 +70,53 @@ public class CreateBill extends AppCompatActivity {
             }
         };
 
-        reminderDate.setOnClickListener(new View.OnClickListener() {
-
+        reminderDateField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new DatePickerDialog(CreateBill.this, date, calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH)).show();
+
             }
         });
 
-//        populateGroupSelection();
+        user1 = findViewById(R.id.bill_create_user1);
+        user1amount = findViewById(R.id.bill_create_user1_amount);
 
+        user2 = findViewById(R.id.bill_create_user2);
+        user2amount = findViewById(R.id.bill_create_user2_amount);
+
+        user3 = findViewById(R.id.bill_create_user3);
+        user3amount = findViewById(R.id.bill_create_user3_amount);
+
+        user4 = findViewById(R.id.bill_create_user4);
+        user4amount = findViewById(R.id.bill_create_user4_amount);
+
+        user5 = findViewById(R.id.bill_create_user5);
+        user5amount = findViewById(R.id.bill_create_user5_amount);
+
+        populateGroupSelection();
+
+
+    }
+    // open the date dialog
+    public void setReminderDate(View view)
+    {
+        new DatePickerDialog(CreateBill.this, date, calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
     @Override
     public void onStart() {
 
         super.onStart();
-        populateGroupSelection();
+        groupField.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                getUsersInSelectedGroup(groupField.getSelectedItem().toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     public void updateDateLabel()
@@ -78,7 +124,7 @@ public class CreateBill extends AppCompatActivity {
         String dateFormat = "dd-MMM-YYYY";
         SimpleDateFormat sdf = new SimpleDateFormat(dateFormat, Locale.US);
 
-        reminderDate.setText(sdf.format(calendar.getTime()));
+        reminderDateField.setText(sdf.format(calendar.getTime()));
     }
 
     // add the back arrow functionality
@@ -95,17 +141,237 @@ public class CreateBill extends AppCompatActivity {
     }
 
     // get and save the fields to the server
-    public void onBillSave(View view)
+    public void onBillSave(View view) throws Exception
     {
-        //todo implement
         Log.v("Bill Save","Attempting to create and save bill");
+        String billName, category, groupName, splitType, recurrence;
+        double amount;
+        Date reminderDate, createDate;
+        HashMap<String, Double> billSplit = new HashMap<>();
+
+        // todo - grab all the textfield data and clean/process it
+        // use some of global fields above
+        billNameField = findViewById(R.id.create_bill_name);
+
+
+        categoryField = findViewById(R.id.create_bill_category);
+        category = categoryField.getSelectedItem().toString();
+
+
+        groupName = groupField.getSelectedItem().toString();
+
+        amountField = findViewById(R.id.create_bill_amount);
+
+        splitTypeField = findViewById(R.id.create_bill_split_type_spinner);
+        splitType = splitTypeField.getSelectedItem().toString();
+        String[] split_type = getResources().getStringArray(R.array.bill_split_type);
+
+
+        recurrenceField = findViewById(R.id.create_bill_recurrence);
+        recurrence = recurrenceField.getSelectedItem().toString();
+
+//        SimpleDateFormat sdf = new SimpleDateFormat(reminderDateField.getText().toString());
+        reminderDate = (calendar.getTime());
+        Log.v("reminderDate",reminderDate.toString());
+
+        if (validateFields())
+        {
+            // category, groupName, splitType, recurrence, reminderDate
+            createDate =  Calendar.getInstance().getTime();
+
+            amount = Double.parseDouble(amountField.getText().toString());
+
+            Log.v("validateFields: users", String.valueOf(users.size()));
+            if (splitType.equals(split_type[0]))
+            {
+                billSplit.put(users.get(0).getUserEmail(),Double.parseDouble(user1amount.getText().toString()));    // put user1's split of the bill into the hashmap
+                billSplit.put(users.get(1).getUserEmail(), Double.parseDouble((user2amount.getText().toString()))); // put user2's split of the bill into the hashmap
+
+                if (user3amount.getVisibility() == View.VISIBLE)
+                    billSplit.put(users.get(2).getUserEmail(),Double.parseDouble(user3amount.getText().toString()));
+                if (user4amount.getVisibility() == View.VISIBLE)
+                    billSplit.put(users.get(3).getUserEmail(), Double.parseDouble(user4amount.getText().toString()));
+                if (user5amount.getVisibility() == View.VISIBLE)
+                    billSplit.put(users.get(4).getUserEmail(), Double.parseDouble(user5amount.getText().toString()));
+            }
+            // if it is based on percentages, it will need to be converted to dollar values first
+            else if (splitType.equals(split_type[1]))
+            {
+                double split1, split2, split3, split4, split5;
+                split1 = (Double.parseDouble(user1amount.getText().toString()) / 100) * amount;
+                billSplit.put(users.get(0).getUserEmail(),split1);
+
+                split2 = (Double.parseDouble(user2amount.getText().toString()) / 100) * amount;
+                billSplit.put(users.get(1).getUserEmail(),split2);
+
+                if (user3amount.getVisibility() == View.VISIBLE) {
+                    split3 = (Double.parseDouble(user3amount.getText().toString()) / 100) * amount;
+                    billSplit.put(users.get(2).getUserEmail(),split3);
+                }
+                if (user4amount.getVisibility() == View.VISIBLE) {
+                    split4 = (Double.parseDouble(user4amount.getText().toString()) / 100) * amount;
+                    billSplit.put(users.get(3).getUserEmail(),split4);
+                }
+                if (user5amount.getVisibility() == View.VISIBLE){
+                    split5 = (Double.parseDouble(user5amount.getText().toString()) / 100) * amount;
+                    billSplit.put(users.get(4).getUserEmail(),split5);
+                }
+            }
+            billName = billNameField.getText().toString();
+
+
+            if (categoryField.getSelectedItem().toString().equals("Category"))
+                category = null;
+            else
+                category = categoryField.getSelectedItem().toString();
+
+            recurrence = recurrenceField.getSelectedItem().toString();
+
+            // set the values of the bill
+            Bill bill = new Bill();
+            bill.setName(billName);
+            bill.setAmountDue(amount);
+            bill.setAmountPaid(0.00);
+            bill.setCategory(category);
+            bill.setCreateDate(createDate);
+            bill.setRemindDate(reminderDate);
+            bill.setGroupName(groupName);
+            bill.setDescription(null);
+            bill.setPhotoURI(null);
+            bill.setRecurring(recurrence);
+            bill.setSplitType(splitType);
+            bill.setBillSplit(billSplit);
+
+            DBManager.getInstance().insertData("bills",bill);
+            // todo create another method to add the bill to the calendar
+            Toast.makeText(this, "Success!", Toast.LENGTH_LONG);
+            finish();
+        }
+        else Log.v("onBillSave","Cancelled save attempt, valid data no entered");
+    }
+
+    /*
+        validate all the fields and amounts for the create bill screen
+     */
+    public boolean validateFields()
+    {
+
+        // bill name check
+        if (billNameField.getText().toString().isEmpty()) {
+            billNameField.setError("Please Enter a bill name");
+            return false;
+        }
+        if (user1amount.getText().toString().isEmpty()) {
+            user1amount.setError("Enter an amount");
+            return false;
+        }
+        if (user2amount.getText().toString().isEmpty()) {
+            user2amount.setError("Enter an amount");
+            return false;
+        }
+
+        if (user3amount.getVisibility() == View.VISIBLE) {
+            if (user3amount.getText().toString().isEmpty())
+            {
+                user3amount.setError("Enter an amount");
+                return false;
+            }
+        }
+        if (user4amount.getVisibility() == View.VISIBLE) {
+            if (user4amount.getText().toString().isEmpty()) {
+                user4amount.setError("Enter an amount");
+                return false;
+            }
+        }
+        if (user5amount.getVisibility() == View.VISIBLE) {
+            if (user5amount.getText().toString().isEmpty()) {
+                user5amount.setError("Enter an amount");
+                return false;
+            }
+        }
+        if (reminderDateField.getText().toString().isEmpty()) {
+            reminderDateField.setError("Please select a date");
+            return false;
+        }
+
+        try {
+            Double.parseDouble(amountField.getText().toString());
+        }
+        catch(Exception e)
+        {
+            Log.e("Error Parsing AmountField in onBillSave: ",e.getStackTrace().toString());
+            amountField.setError("Please enter a billable amount");
+            return false;
+        }
+        String[] split_type = getResources().getStringArray(R.array.bill_split_type);
+        // if split by amount is selected, then check the totals to see if they add up
+        if (splitTypeField.getSelectedItem().toString().equals(split_type[0]))
+        {
+            double amount = Double.parseDouble(amountField.getText().toString());
+            double totalEntered = 0.00;
+
+            totalEntered += Double.parseDouble(user1amount.getText().toString());
+            totalEntered += Double.parseDouble(user2amount.getText().toString());
+
+            if (user3amount.getVisibility() == View.VISIBLE)
+                totalEntered += Double.parseDouble(user3amount.getText().toString());
+            if(user4amount.getVisibility() == View.VISIBLE)
+                totalEntered += Double.parseDouble(user4amount.getText().toString());
+            if (user5amount.getVisibility() == View.VISIBLE)
+                totalEntered += Double.parseDouble(user5amount.getText().toString());
+
+            if (Double.compare(amount,totalEntered) == 0)
+            {
+                Log.v("createBill amount validation: ", "Amounts match");
+            }
+            else if (Double.compare(amount,totalEntered) > 0)
+            {
+                Toast.makeText(this,"Short by $" + (amount - totalEntered),Toast.LENGTH_LONG).show();
+                return false;
+            }
+            else if (Double.compare(amount,totalEntered) < 0)
+            {
+                Toast.makeText(this, "Over by $" + (totalEntered - amount), Toast.LENGTH_LONG).show();
+                return false;
+            }
+        }
+        // else if split by percentage is selected
+        else {
+            double totalEntered = 0.00;
+
+            totalEntered += Double.parseDouble(user1amount.getText().toString());
+            totalEntered += Double.parseDouble(user2amount.getText().toString());
+
+            if (user3amount.getVisibility() == View.VISIBLE)
+                totalEntered += Double.parseDouble(user3amount.getText().toString());
+            if(user4amount.getVisibility() == View.VISIBLE)
+                totalEntered += Double.parseDouble(user4amount.getText().toString());
+            if (user5amount.getVisibility() == View.VISIBLE)
+                totalEntered += Double.parseDouble(user5amount.getText().toString());
+
+            if (Double.compare(totalEntered, 100) == 0)
+            {
+                Log.v("createBill amount validation: ", "Percentage correct at 100%");
+            }
+            else if (totalEntered < 100)
+            {
+                Toast.makeText(this,"Short by " + (100 - totalEntered) + "%",Toast.LENGTH_LONG).show();
+                return false;
+            }
+            else if (totalEntered > 100)
+            {
+                Toast.makeText(this,"Over by " + (totalEntered - 100) + "%",Toast.LENGTH_LONG).show();
+                return false;
+            }
+        }
+
+        return true;
     }
 
     // add the groups the user is found in to the group selection spinnner
     public void populateGroupSelection()
     {
-//        QuerySnapshot query = DBManager.getInstance().getGroups();
-        ArrayList<Group> objects = new ArrayList<>();
+        ArrayList<Object> objects = new ArrayList<>();
         DBManager.getInstance().getDb().collection("groups").whereArrayContains("groupUsers", DBManager.getInstance().getCurrentUserEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -114,26 +380,27 @@ public class CreateBill extends AppCompatActivity {
                     {
                         objects.add(doc.toObject(Group.class));
                     }
+                    addGroupsToSpinner(objects);
                 }
                 else
-                    Log.d("getGroups Query", String.valueOf(task.getException()));
+                    Log.d("test getGroups Query", String.valueOf(task.getException()));
             }
         });
-
-
-        ArrayList<Group> groups = new ArrayList<>();
+    }
+    public void addGroupsToSpinner(ArrayList<Object> objects) {
+         groups = new ArrayList<>();
         for (int i = 0; i < objects.size(); i++)
         {
             groups.add((Group) objects.get(i));
         }
 
-        Log.v("populateGroupSelection group: ",groups.toString());
+        Log.v("test populateGroupSelection group: ",groups.toString());
 
         ArrayList<String> groupNames = new ArrayList<>();
         for (int i=0; i < groups.size(); i++)
         {
             groupNames.add(groups.get(i).getGroupName());
-            Log.v("populateGroupSelection groupNames: ", groups.get(i).getGroupName());
+            Log.v("test populateGroupSelection groupNames: ", groups.get(i).getGroupName());
         }
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, groupNames);
@@ -141,6 +408,103 @@ public class CreateBill extends AppCompatActivity {
 
         Spinner groupSpinner = findViewById(R.id.create_bill_group_spinner);
         groupSpinner.setAdapter(arrayAdapter);
+    }
+
+    public void getUsersInSelectedGroup(String groupName)
+    {
+        Log.v("test getUsersInSelectedGroup: groupName = ", groupName);
+        // get the list of users in the group
+//        Group selectedGroup = DBManager.getInstance().getGroup(groupName);    // getGroup has issue of returning before query finishes
+        Group selectedGroup = new Group();
+        int i = 0;
+        while (i < groups.size()) {
+            if (groups.get(i).getGroupName().equals(groupName)) {
+                selectedGroup.setGroupName(groups.get(i).getGroupName());
+                selectedGroup.setGroupUsers( groups.get(i).getGroupUsers());
+                Log.v("test getUsersInSelectedGroup: setGroupName", groups.get(i).getGroupName());
+            }
+
+            i++;
+        }
+
+        // then get the user objects by searching for those users (by email) and getting them into User objects
+//        users = DBManager.getInstance().getUsers(selectedGroup.getGroupUsers());
+        users = new ArrayList<>();
+
+        DBManager.getInstance().getDb().collection("users").whereIn("userEmail",selectedGroup.getGroupUsers()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful())
+                {
+//                    userList.forEach(x -> task.getResult().toObjects(User.class));
+                    for (QueryDocumentSnapshot doc : task.getResult())
+                        users.add(doc.toObject(User.class));
+                    Log.d("userList in getUsersInSelectedGroup: ", users.toArray().toString());
+                    setUserFields(users);
+                }
+
+            }
+        });
+
+
+        Log.v("getUsers - attempting to add User objects: ", users.toArray().toString());
+
+        // then add the names to the userfields and unhide the number of users in the group
+
+    }
+
+    public void setUserFields(ArrayList<User> users)
+    {
+
+        clearUserFields();
+
+        // I realize this is not the best practice but did not have time to make this dynamic using layout inflater and list iterator
+        // the architecture still allows this to be dynamic, just the limited time to implement did not
+
+        if (users.size() >= 2)
+        {
+            user1.setText(users.get(0).getDisplayName());
+            user2.setText(users.get(1).getDisplayName());
+        }
+        if(users.size() >= 3) {
+            user3.setText(users.get(2).getDisplayName());
+            user3.setVisibility(View.VISIBLE);
+            user3amount.setVisibility(View.VISIBLE);
+
+        }
+        if(users.size() >= 4) {
+            user4.setText(users.get(3).getDisplayName());
+            user4.setVisibility(View.VISIBLE);
+            user4amount.setVisibility(View.VISIBLE);
+        }
+        if(users.size()>=5) {
+            user5.setText(users.get(4).getDisplayName());
+            user5.setVisibility(View.VISIBLE);
+            user5amount.setVisibility(View.VISIBLE);
+        }
+    }
+    void clearUserFields()
+    {
+        user3.setVisibility(View.GONE);
+        user3amount.setVisibility(View.GONE);
+
+        user4.setVisibility(View.GONE);
+        user4amount.setVisibility(View.GONE);
+
+        user5.setVisibility(View.GONE);
+        user5amount.setVisibility(View.GONE);
+
+        user1.setText("User");
+        user2.setText("User");
+        user3.setText("User");
+        user4.setText("User");
+        user5.setText("User");
+
+        user1amount.setText("");
+        user2amount.setText("");
+        user3amount.setText("");
+        user4amount.setText("");
+        user5amount.setText("");
     }
 
 }

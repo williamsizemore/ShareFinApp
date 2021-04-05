@@ -13,6 +13,8 @@ public class User {
         this.displayName = displayName;
         this.photoURI = ""; // set this to an empty string by default, but allow photos to be uploaded later
     }
+    public User() {}
+
     public String getPhotoURI() {
         return photoURI;
     }

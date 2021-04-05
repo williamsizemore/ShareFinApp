@@ -13,8 +13,10 @@
         android:layout_marginTop="12dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
-        android:hint="0.00"
+        android:hint="@string/default_float_value"
+        android:importantForAutofill="no"
         android:inputType="numberDecimal"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bill_create_user4_amount" />
 
@@ -25,46 +27,50 @@
         android:layout_marginTop="12dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
-        android:hint="0.00"
+        android:hint="@string/default_float_value"
+        android:importantForAutofill="no"
         android:inputType="numberDecimal"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bill_create_user3_amount" />
 
     <EditText
-        android:id="@+id/create_bill_user2_amount"
+        android:id="@+id/bill_create_user2_amount"
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
-        android:hint="0.00"
+        android:hint="@string/default_float_value"
         android:inputType="numberDecimal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bill_create_user1_amount" />
+        app:layout_constraintTop_toBottomOf="@+id/bill_create_user1_amount"
+        android:importantForAutofill="no" />
 
     <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/textInputEditText"
+        android:id="@+id/create_bill_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="24dp"
-        android:hint="Bill Name"
+        android:hint="@string/bill_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editTextNumberDecimal"
+        android:id="@+id/create_bill_amount"
         android:layout_width="150dp"
         android:layout_height="50dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="28dp"
         android:ems="10"
-        android:hint="Amount"
+        android:hint="@string/amount"
         android:inputType="numberDecimal"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputEditText" />
+        app:layout_constraintTop_toBottomOf="@+id/create_bill_name"
+        android:importantForAutofill="no" />
 
     <TextView
         android:id="@+id/bill_create_user1"
@@ -72,10 +78,10 @@
         android:layout_height="50dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="64dp"
-        android:text="User1"
+        android:text="@string/user_temp_text"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumberDecimal" />
+        app:layout_constraintTop_toBottomOf="@+id/create_bill_amount" />
 
     <EditText
         android:id="@+id/bill_create_user1_amount"
@@ -84,12 +90,13 @@
         android:layout_marginTop="64dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
-        android:hint="0.00"
+        android:hint="@string/default_float_value"
         android:inputType="numberDecimal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/bill_create_user1"
-        app:layout_constraintTop_toBottomOf="@+id/spinner2" />
+        app:layout_constraintTop_toBottomOf="@+id/create_bill_category"
+        android:importantForAutofill="no" />
 
     <EditText
         android:id="@+id/bill_create_user3_amount"
@@ -98,31 +105,33 @@
         android:layout_marginTop="12dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
-        android:hint="0.00"
+        android:hint="@string/default_float_value"
+        android:importantForAutofill="no"
         android:inputType="numberDecimal"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/create_bill_user2_amount" />
+        app:layout_constraintTop_toBottomOf="@+id/bill_create_user2_amount" />
 
     <Spinner
-        android:id="@+id/spinner2"
+        android:id="@+id/create_bill_category"
         android:layout_width="164dp"
         android:layout_height="50dp"
         android:layout_marginTop="28dp"
         android:entries="@array/category"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.076"
-        app:layout_constraintStart_toEndOf="@+id/editTextNumberDecimal"
-        app:layout_constraintTop_toBottomOf="@+id/textInputEditText" />
+        app:layout_constraintStart_toEndOf="@+id/create_bill_amount"
+        app:layout_constraintTop_toBottomOf="@+id/create_bill_name" />
 
     <Spinner
-        android:id="@+id/bill_split_type_spinner"
+        android:id="@+id/create_bill_split_type_spinner"
         android:layout_width="240dp"
         android:layout_height="47dp"
         android:entries="@array/bill_split_type"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.15"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumberDecimal" />
+        app:layout_constraintTop_toBottomOf="@+id/create_bill_amount" />
 
     <TextView
         android:id="@+id/bill_create_user2"
@@ -130,8 +139,9 @@
         android:layout_height="50dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="8dp"
-        android:text="User2"
-        app:layout_constraintEnd_toStartOf="@+id/create_bill_user2_amount"
+        android:text="@string/user_temp_text"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toStartOf="@+id/bill_create_user2_amount"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bill_create_user1" />
@@ -142,7 +152,9 @@
         android:layout_height="50dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="12dp"
-        android:text="User3"
+        android:text="@string/user_temp_text"
+        android:textSize="24sp"
+        android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/bill_create_user3_amount"
         app:layout_constraintHorizontal_bias="0.058"
         app:layout_constraintStart_toStartOf="parent"
@@ -154,7 +166,9 @@
         android:layout_height="50dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="12dp"
-        android:text="User4"
+        android:text="@string/user_temp_text"
+        android:textSize="24sp"
+        android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/bill_create_user4_amount"
         app:layout_constraintHorizontal_bias="0.058"
         app:layout_constraintStart_toStartOf="parent"
@@ -166,37 +180,80 @@
         android:layout_height="50dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="12dp"
-        android:text="User5"
+        android:text="@string/user_temp_text"
+        android:textSize="24sp"
         app:layout_constraintEnd_toStartOf="@+id/bill_create_user5_amount"
         app:layout_constraintHorizontal_bias="0.058"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bill_create_user4" />
+        app:layout_constraintTop_toBottomOf="@+id/bill_create_user4"
+        android:visibility="gone"
+        />
 
     <Spinner
         android:id="@+id/create_bill_group_spinner"
         android:layout_width="202dp"
-        android:layout_height="61dp"
-        android:layout_marginStart="16dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="64dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/create_bill_reminder_date"
-        app:layout_constraintVertical_bias="0.53" />
+        app:layout_constraintVertical_bias="0.325" />
 
     <EditText
         android:id="@+id/create_bill_reminder_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="12dp"
         android:clickable="false"
         android:cursorVisible="false"
         android:ems="10"
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:hint="@string/reminder_date"
+        android:importantForAutofill="no"
         android:inputType="date"
+        android:onClick="setReminderDate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.106"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bill_create_user5" />
+
+    <TextView
+        android:id="@+id/group_spinner_title_text"
+        android:layout_width="97dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="96dp"
+        android:text="@string/group"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toStartOf="@+id/create_bill_group_spinner"
+        app:layout_constraintHorizontal_bias="0.639"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/create_bill_reminder_date" />
+
+    <Spinner
+        android:id="@+id/create_bill_recurrence"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginTop="12dp"
+        android:entries="@array/reminder_recurrence"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.372"
+        app:layout_constraintStart_toEndOf="@+id/create_bill_reminder_date"
+        app:layout_constraintTop_toBottomOf="@+id/bill_create_user5_amount" />
+
+    <ImageButton
+        android:id="@+id/reminderDateIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/reminder_date"
+        android:onClick="setReminderDate"
+        app:layout_constraintBottom_toBottomOf="@+id/create_bill_reminder_date"
+        app:layout_constraintEnd_toEndOf="@+id/create_bill_reminder_date"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/create_bill_reminder_date"
+        app:layout_constraintTop_toTopOf="@+id/create_bill_reminder_date"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/schedule_icon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

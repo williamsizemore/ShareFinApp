@@ -22,8 +22,8 @@
         <item>Shopping</item>
     </string-array>
     <string-array name="bill_split_type">
-        <item>$ split by amount</item>
-        <item>% split by percentage</item>
+        <item name="bill_split_type_amnt">$ split by amount</item>
+        <item name="bill_split_type_perc">% split by percentage</item>
     </string-array>
     <string name="addUserToGroup">user@gmail.com</string>
     <string name="create_group">Create Group</string>
@@ -31,5 +31,17 @@
     <string name="group_name">Group Name</string>
     <string name="reminder_date">MM/DD/YYYY</string>
     <string name="create_bill_action_bar_text">Create Bill</string>
+    <string name="user_temp_text">User</string>
+    <string name="amount">Amount</string>
+    <string name="bill_name">Bill Name</string>
+    <string name="default_float_value">0.00</string>
+    <string name="group">Group</string>
 
+    <string-array name="reminder_recurrence">
+        <item>Once</item>
+        <item>Weekly</item>
+        <item>Monthly</item>
+        <item>Yearly</item>
+    </string-array>
+    <string name="e_amount"></string>
 </resources>
