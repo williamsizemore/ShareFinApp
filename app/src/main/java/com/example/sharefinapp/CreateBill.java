@@ -5,7 +5,9 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -244,6 +246,16 @@ public class CreateBill extends AppCompatActivity {
 
             DBManager.getInstance().insertData("bills",bill);
             // todo create another method to add the bill to the calendar
+            Intent calendarIntent = new Intent(Intent.ACTION_INSERT, CalendarContract.Events.CONTENT_URI);
+            Calendar calendarEvent = Calendar.getInstance();
+            calendarIntent.setType("vnd.android.cursor.item/event");
+            calendarIntent.putExtra("beginTime",calendar.getTimeInMillis());
+            calendarIntent.putExtra("endTime",calendar.getTimeInMillis() + 60 * 60 * 1000);
+            calendarIntent.putExtra("allDay",true);
+            calendarIntent.putExtra("rule","FREQ=" + recurrence.toUpperCase());
+            calendarIntent.putExtra("title",billName + " due");
+            startActivityForResult(calendarIntent, RESULT_OK);
+
             Toast.makeText(this, "Success!", Toast.LENGTH_LONG);
             finish();
         }

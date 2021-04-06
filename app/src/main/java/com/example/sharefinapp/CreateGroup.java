@@ -37,7 +37,7 @@ public class CreateGroup extends AppCompatActivity {
     }
     public void createGroup(View v)
     {
-        ArrayList<EditText> userFieldList = (ArrayList<EditText>) getEditTextFields();
+        ArrayList<EditText> userFieldList = getEditTextFields();
         ArrayList<String> users = new ArrayList<>();
         EditText groupName = findViewById(R.id.editTextGroupName);
 
@@ -53,6 +53,7 @@ public class CreateGroup extends AppCompatActivity {
             // add current user to the list for the group
             users.add(DBManager.getInstance().getCurrentUserEmail());
             Log.v("users List in Groups", users.toString());
+
 
             Group group = new Group(groupName.getText().toString(),users);
             DBManager.getInstance().insertData("groups",group);
@@ -95,7 +96,7 @@ public class CreateGroup extends AppCompatActivity {
     public ArrayList<EditText> getEditTextFields()
     {
         ArrayList<EditText> userEditTexts = new ArrayList<>();
-        LinearLayout userFieldsLayout = (LinearLayout) findViewById(R.id.addUsersToGroupLayoutParent);
+        LinearLayout userFieldsLayout = findViewById(R.id.addUsersToGroupLayoutParent);
         for (int i = 0; i < userFieldsLayout.getChildCount(); i++)
         {
             Log.v("Check UserFields", "Checking Field: " + userFieldsLayout.getChildAt(i).toString());

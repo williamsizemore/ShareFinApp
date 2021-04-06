@@ -1,9 +1,11 @@
 package com.example.sharefinapp;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,7 +29,7 @@ public class BillsFragment extends Fragment {
         RecyclerView recyclerView = viewGroup.findViewById(R.id.bill_recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        Query query = FirebaseFirestore.getInstance().collection("bills");  //todo update query to include just the users stuff
+        Query query = FirebaseFirestore.getInstance().collection("bills"); //todo update query to include just the users stuff
         FirestoreRecyclerOptions<Bill> options = new FirestoreRecyclerOptions.Builder<Bill>().setQuery(query, Bill.class).build();
 
         billAdapter = new FirestoreRecyclerAdapter<Bill, BillViewHolder>(options) {
@@ -47,6 +49,18 @@ public class BillsFragment extends Fragment {
         return viewGroup;
     }
     @Override
+    public void onStart(){
+        super.onStart();
+        billAdapter.startListening();
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (billAdapter != null)
+            billAdapter.stopListening();
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
     {
         Bundle args = getArguments();
@@ -56,15 +70,29 @@ public class BillsFragment extends Fragment {
 
 
     private class BillViewHolder extends RecyclerView.ViewHolder {
-        private View view;
+        private final View view;
 
         public BillViewHolder(@NonNull View itemView) {
             super(itemView);
+            view = itemView;
         }
 
+        @SuppressLint("SetTextI18n")
         void bind(Bill bill)
         {
-            //enter the formatting of the bill info here
+            TextView billName, amount, userOwes, groupName;
+
+            billName = view.findViewById(R.id.bill_item_name);
+            amount = view.findViewById(R.id.bill_item_amount);
+            userOwes = view.findViewById(R.id.bill_item_user_owes);
+            groupName = view.findViewById(R.id.bill_item_group_name);
+
+            billName.setText(bill.getName());
+            amount.setText("$" + bill.getAmountDue());
+
+            groupName.setText(bill.getGroupName());
+
+            userOwes.setText("$" + bill.getBillSplit().get(DBManager.getInstance().getCurrentUserEmail()));
         }
     }
 

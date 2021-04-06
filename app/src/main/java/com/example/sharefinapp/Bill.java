@@ -15,8 +15,9 @@ public class Bill {
     private Date createDate, remindDate;
     private String recurring;
     private HashMap<String, Double> billSplit;
+    private String paidBy;
 
-    public Bill(String category, String description, String splitType, String name, String groupName, double amountDue, double amountPaid, Date createDate, Date remindDate, HashMap<String, Double> billSplit) {
+    public Bill(String category, String description, String splitType, String name, String groupName, double amountDue, double amountPaid, Date createDate, Date remindDate, HashMap<String, Double> billSplit, String paidBy) {
         this.category = category;
         this.description = description;
         this.splitType = splitType;
@@ -27,6 +28,7 @@ public class Bill {
         this.createDate = createDate;
         this.remindDate = remindDate;
         this.billSplit = billSplit;
+        this.paidBy = paidBy;
     }
 
     // needed for compatibility with Firestore
@@ -128,5 +130,13 @@ public class Bill {
 
     public void setBillSplit(HashMap<String, Double> billSplit) {
         this.billSplit = billSplit;
+    }
+
+    public String getPaidBy() {
+        return paidBy;
+    }
+
+    public void setPaidBy(String paidBy) {
+        this.paidBy = paidBy;
     }
 }
