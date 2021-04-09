@@ -42,7 +42,8 @@ public class CreateGroup extends AppCompatActivity {
         EditText groupName = findViewById(R.id.editTextGroupName);
 
 
-        if (isValidGroupInput(groupName,userFieldList)) {
+        if (isValidGroupInput(groupName,userFieldList))
+        {
             // loop through the editText fields to get just the filled in fields and add them to a users list
             for (int i = 0; i < userFieldList.size(); i++) {
                 // if the field is is not empty then add it to the list
@@ -51,12 +52,13 @@ public class CreateGroup extends AppCompatActivity {
 
             }
             // add current user to the list for the group
-            users.add(DBManager.getInstance().getCurrentUserEmail());
+            users.add(DBManager.getInstance().getCurrentUserID());
             Log.v("users List in Groups", users.toString());
 
+            String groupID = DBManager.getInstance().generateKey("groups");
 
-            Group group = new Group(groupName.getText().toString(),users);
-            DBManager.getInstance().insertData("groups",group);
+            Group group = new Group(groupName.getText().toString(),users,groupID);
+            DBManager.getInstance().insertData("groups",groupID ,group);
             finish();
         }
 
@@ -79,8 +81,16 @@ public class CreateGroup extends AppCompatActivity {
                 validInput = false;
                 userFieldList.get(i).setError("Please enter a valid email address");
             }
-            else if(!userFieldList.get(i).getText().toString().isEmpty())
-                validCounter++;
+            else if(!userFieldList.get(i).getText().toString().isEmpty())       // if the field is not empty
+            {
+//                boolean isValidEmail = DBManager.getInstance().isValidData("users","userEmail",userFieldList.get(i).getText().toString());    // check whether the user exists the in database - async db causing issues with this implementation
+//                if (isValidEmail)
+                    validCounter++;
+//                else {
+//                    validInput = false;
+//                    Toast.makeText(this, userFieldList.get(i).getText().toString() + " is invalid",Toast.LENGTH_LONG).show();
+//                }
+            }
         }
 
         if (validCounter == 0)
@@ -88,6 +98,8 @@ public class CreateGroup extends AppCompatActivity {
             validInput = false;
             Toast.makeText(this,"Please enter a user to add",Toast.LENGTH_LONG).show();
         }
+
+
 
         return validInput;
     }

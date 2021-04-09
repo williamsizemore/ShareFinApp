@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.sharefinapp">
-
-
 
     <application
         android:allowBackup="true"
@@ -12,12 +9,17 @@
         android:roundIcon="@mipmap/sf_launcher_icon"
         android:supportsRtl="true"
         android:theme="@style/Theme.ShareFinApp">
+        <activity
+            android:name=".BillView"
+            android:label="@string/title_activity_bill_view"
+            android:theme="@style/Theme.ShareFinApp.NoActionBar"></activity>
+
         <service
             android:name=".NotificationService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 

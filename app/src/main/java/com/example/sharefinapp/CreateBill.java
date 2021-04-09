@@ -21,19 +21,15 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.lang.reflect.Array;
 import java.util.Date;
-import com.google.type.DateTime;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.Map;
 import java.util.HashMap;
 
 public class CreateBill extends AppCompatActivity {
@@ -46,6 +42,7 @@ public class CreateBill extends AppCompatActivity {
     private ArrayList<Group> groups;
     private ArrayList<User> users;
     private DatePickerDialog.OnDateSetListener date;
+    private Group selectedGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +108,7 @@ public class CreateBill extends AppCompatActivity {
         groupField.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                getUsersInSelectedGroup(groupField.getSelectedItem().toString());
+                getUsersInSelectedGroup(groupField.getSelectedItem().toString()); // todo issues here
             }
 
             @Override
@@ -237,7 +234,7 @@ public class CreateBill extends AppCompatActivity {
             bill.setCategory(category);
             bill.setCreateDate(createDate);
             bill.setRemindDate(reminderDate);
-            bill.setGroupName(groupName);
+            bill.setGroupID(selectedGroup.getGroupID());
             bill.setDescription(null);
             bill.setPhotoURI(null);
             bill.setRecurring(recurrence);
@@ -427,12 +424,13 @@ public class CreateBill extends AppCompatActivity {
         Log.v("test getUsersInSelectedGroup: groupName = ", groupName);
         // get the list of users in the group
 //        Group selectedGroup = DBManager.getInstance().getGroup(groupName);    // getGroup has issue of returning before query finishes
-        Group selectedGroup = new Group();
+        selectedGroup = new Group();
         int i = 0;
         while (i < groups.size()) {
             if (groups.get(i).getGroupName().equals(groupName)) {
                 selectedGroup.setGroupName(groups.get(i).getGroupName());
-                selectedGroup.setGroupUsers( groups.get(i).getGroupUsers());
+                selectedGroup.setGroupUserIDs( groups.get(i).getGroupUserIDs());    // potentially empty - need to do a clean run todo
+                selectedGroup.setGroupID((groups.get(i).getGroupID()));
                 Log.v("test getUsersInSelectedGroup: setGroupName", groups.get(i).getGroupName());
             }
 
@@ -443,7 +441,7 @@ public class CreateBill extends AppCompatActivity {
 //        users = DBManager.getInstance().getUsers(selectedGroup.getGroupUsers());
         users = new ArrayList<>();
 
-        DBManager.getInstance().getDb().collection("users").whereIn("userEmail",selectedGroup.getGroupUsers()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        DBManager.getInstance().getDb().collection("users").whereIn("userID",selectedGroup.getGroupUserIDs()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful())

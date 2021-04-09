@@ -4,11 +4,13 @@ import java.util.List;
 
 public class Group {
     private String groupName;
-    private List<String> groupUsers;
+    private List<String> groupUserIDs;
+    private String groupID;
 
-    public Group(String groupName, List<String> groupUsers) {
+    public Group(String groupName, List<String> groupUserIDs,String groupID) {
         this.groupName = groupName;
-        this.groupUsers = groupUsers;
+        this.groupUserIDs = groupUserIDs;
+        this.groupID = groupID;
     }
     // for firestore compatibility
     public Group() {}
@@ -21,11 +23,19 @@ public class Group {
         this.groupName = groupName;
     }
 
-    public List<String> getGroupUsers() {
-        return groupUsers;
+    public List<String> getGroupUserIDs() {
+        return groupUserIDs;
     }
 
-    public void setGroupUsers(List<String> groupUsers) {
-        this.groupUsers = groupUsers;
+    public void setGroupUserIDs(List<String> groupUserIDs) {
+        this.groupUserIDs = groupUserIDs;
+    }
+
+    public String getGroupID() {
+        return groupID;
+    }
+
+    public void setGroupID(String groupID) {
+        this.groupID = groupID;
     }
 }

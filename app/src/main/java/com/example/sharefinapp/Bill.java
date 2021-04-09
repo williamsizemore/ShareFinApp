@@ -10,25 +10,27 @@ import java.util.HashMap;
 public class Bill {
     private String  category, description, splitType, name;
     private String photoURI;
-    private String groupName;
+    private String groupID;
     private double amountDue, amountPaid;
     private Date createDate, remindDate;
     private String recurring;
     private HashMap<String, Double> billSplit;
     private String paidBy;
+    private String BillID;
 
-    public Bill(String category, String description, String splitType, String name, String groupName, double amountDue, double amountPaid, Date createDate, Date remindDate, HashMap<String, Double> billSplit, String paidBy) {
+    public Bill(String category, String description, String splitType, String name, String groupID, double amountDue, double amountPaid, Date createDate, Date remindDate, HashMap<String, Double> billSplit, String paidBy, String billID) {
         this.category = category;
         this.description = description;
         this.splitType = splitType;
         this.name = name;
-        this.groupName = groupName;
+        this.groupID = groupID;
         this.amountDue = amountDue;
         this.amountPaid = amountPaid;
         this.createDate = createDate;
         this.remindDate = remindDate;
         this.billSplit = billSplit;
         this.paidBy = paidBy;
+        BillID = billID;
     }
 
     // needed for compatibility with Firestore
@@ -76,12 +78,12 @@ public class Bill {
         this.photoURI = photoURI;
     }
 
-    public String getGroupName() {
-        return groupName;
+    public String getGroupID() {
+        return groupID;
     }
 
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
+    public void setGroupID(String groupID) {
+        this.groupID = groupID;
     }
 
     public double getAmountDue() {
@@ -138,5 +140,13 @@ public class Bill {
 
     public void setPaidBy(String paidBy) {
         this.paidBy = paidBy;
+    }
+
+    public String getBillID() {
+        return BillID;
+    }
+
+    public void setBillID(String billID) {
+        BillID = billID;
     }
 }

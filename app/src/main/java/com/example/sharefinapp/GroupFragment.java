@@ -31,8 +31,8 @@ public class GroupFragment extends Fragment {
         RecyclerView recyclerView = viewGroup.findViewById(R.id.group_recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        Query query = FirebaseFirestore.getInstance().collection("groups").whereArrayContains("groupUsers",DBManager.getInstance().getCurrentUserEmail());
-//        Query query = FirebaseFirestore.getInstance().collection("groups");
+        Query query = FirebaseFirestore.getInstance().collection("groups").whereArrayContains("groupUserIDs",DBManager.getInstance().getCurrentUserID());
+
 
         FirestoreRecyclerOptions<Group> options = new FirestoreRecyclerOptions.Builder<Group>().setQuery(query, Group.class).build();
 
@@ -76,10 +76,6 @@ public class GroupFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
     {
         Bundle args = getArguments();
-//        groupList.setDBManager.getInstance().getDb().collection("groups").get();
-//        Query query = FirebaseFirestore.getInstance().collection("groups").whereArrayContains("groupUsers",DBManager.getInstance().getCurrentUserEmail());
-
-//        FirestoreRecyclerOptions<Group> options = new FirestoreRecyclerOptions.Builder<Group>().setQuery(query, Group.class).build();
 
     }
 

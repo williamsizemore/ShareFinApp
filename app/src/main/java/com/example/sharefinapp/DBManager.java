@@ -9,15 +9,19 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.*;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class DBManager extends AppCompatActivity {
@@ -80,6 +84,14 @@ public class DBManager extends AppCompatActivity {
         db.collection(collectionPath).add(data);
     }
 
+    public String generateKey(String collectionPath)
+    {
+        String key = db.collection(collectionPath).document().getId();
+        Log.v("id generation", key);
+        return key;
+
+    }
+
     public String getCurrentUserEmail()
     {
         return user.getEmail();
@@ -93,10 +105,19 @@ public class DBManager extends AppCompatActivity {
         return user.getDisplayName();
     }
 
-    public boolean isValidUserEmail(String userEmail)
+    /* checks to see if the user exists in the and returns the message result */
+    public boolean isValidData(String collectionPath, String field, String value)
     {
-        boolean exists = db.collection("users").document(userEmail).get().isSuccessful();
-        return exists;
+        final Boolean bool ;
+
+        bool = db.collection(collectionPath).whereEqualTo(field,value).limit(1).get().isSuccessful();
+
+        return isValidDataExecute(bool);
+    }
+
+    private boolean isValidDataExecute(boolean bool)
+    {
+        return bool;
     }
 
     // get all groups associated with the user // WARNING: query is asynchronous and may return before populating return values
