@@ -1,5 +1,6 @@
 package com.example.sharefinapp;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -105,12 +106,12 @@ public class ActivityFeed extends AppCompatActivity implements View.OnClickListe
             case R.id.fabAddGroup:
                 Log.v("addGroup","Add Group was selected");
                 Intent createGroupIntent = new Intent(this, CreateGroup.class);
-                startActivityForResult(createGroupIntent,RESULT_OK);
+                startActivityForResult(createGroupIntent,RESULT_OK, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
                 break;
             case R.id.fabAddBill:
                 Log.v("addBill","Add bill was selected");
                 Intent createBillIntent = new Intent(this, CreateBill.class);
-                startActivity(createBillIntent);
+                startActivity(createBillIntent,ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
                 break;
         }
     }

@@ -8,9 +8,12 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.CalendarContract;
+import android.transition.Explode;
+import android.transition.Slide;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
@@ -46,6 +49,7 @@ public class CreateBill extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().setEnterTransition(new Slide());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_bill);
 
@@ -93,6 +97,7 @@ public class CreateBill extends AppCompatActivity {
 
         populateGroupSelection();
 
+        getWindow().setExitTransition(new Slide());
 
     }
     // open the date dialog
@@ -132,6 +137,7 @@ public class CreateBill extends AppCompatActivity {
     {
         switch (item.getItemId()) {
             case android.R.id.home:
+                getWindow().setExitTransition(new Slide());
                 this.finish();
                 return true;
             default:
@@ -381,7 +387,7 @@ public class CreateBill extends AppCompatActivity {
     public void populateGroupSelection()
     {
         ArrayList<Object> objects = new ArrayList<>();
-        DBManager.getInstance().getDb().collection("groups").whereArrayContains("groupUsers", DBManager.getInstance().getCurrentUserEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        DBManager.getInstance().getDb().collection("groups").whereArrayContains("groupUserIDs", DBManager.getInstance().getCurrentUserID()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {

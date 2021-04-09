@@ -43,10 +43,32 @@ public class DBManager extends AppCompatActivity {
         fbAuth = FirebaseAuth.getInstance();
     }
 
-    public FirebaseUser getUser() {
+    public FirebaseUser getCurrentUser() {
         return user;
     }
 
+    public User getUser(String userEmail)
+    {
+        User user = new User();
+        db.collection("users").whereEqualTo("userEmail",userEmail).limit(1).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                user.setUserID(queryDocumentSnapshots.toObjects(User.class).get(0).getUserID());
+                user.setUserEmail(queryDocumentSnapshots.toObjects(User.class).get(0).getUserEmail());
+                user.setDisplayName(queryDocumentSnapshots.toObjects(User.class).get(0).getDisplayName());
+            }
+        });
+        while (user == null) {
+            try {
+                user.wait(100);
+            }
+            catch (Exception e)
+            {
+                Log.e("UserID is Empty", e.getStackTrace().toString());
+            }
+        }
+        return user;
+    }
     public ArrayList<User> getUsers(List<String> userEmails){
         ArrayList<User> userList = new ArrayList<>();
 

@@ -3,10 +3,12 @@ package com.example.sharefinapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.transition.Slide;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -17,6 +19,8 @@ public class CreateGroup extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().setEnterTransition(new Slide());
+        getWindow().setExitTransition(new Slide());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_group);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);  // add the back arrow
@@ -44,13 +48,17 @@ public class CreateGroup extends AppCompatActivity {
 
         if (isValidGroupInput(groupName,userFieldList))
         {
+
             // loop through the editText fields to get just the filled in fields and add them to a users list
             for (int i = 0; i < userFieldList.size(); i++) {
                 // if the field is is not empty then add it to the list
-                if (!userFieldList.get(i).getText().toString().isEmpty())
-                    users.add(userFieldList.get(i).getText().toString());
+                if (!userFieldList.get(i).getText().toString().isEmpty()) {
+                    users.add(getUserID(userFieldList.get(i).getText().toString()));
+                }
+//                    users.add(userFieldList.get(i).getText().toString());
 
             }
+
             // add current user to the list for the group
             users.add(DBManager.getInstance().getCurrentUserID());
             Log.v("users List in Groups", users.toString());
@@ -62,6 +70,10 @@ public class CreateGroup extends AppCompatActivity {
             finish();
         }
 
+    }
+
+    public String getUserID(String userEmail){
+        return DBManager.getInstance().getUser(userEmail).getUserID();
     }
 
     // todo add further verification checks against existing users
