@@ -1,19 +1,10 @@
 package com.example.sharefinapp;
 
-import android.content.Context;
-import android.view.View;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.lifecycle.Lifecycle;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
-import androidx.viewpager2.widget.ViewPager2;
-
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 
 
 public class ActivityFeedAdapter extends FragmentStateAdapter {

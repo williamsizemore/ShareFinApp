@@ -8,12 +8,10 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.CalendarContract;
-import android.transition.Explode;
 import android.transition.Slide;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
@@ -41,7 +39,8 @@ public class CreateBill extends AppCompatActivity {
     private EditText reminderDateField, billNameField,amountField;
     private TextView user1, user2, user3, user4,user5;
     private EditText user1amount, user2amount, user3amount, user4amount, user5amount;
-    private Spinner categoryField, recurrenceField, groupField, splitTypeField;
+    private Spinner groupField;
+    private Spinner splitTypeField;
     private ArrayList<Group> groups;
     private ArrayList<User> users;
     private DatePickerDialog.OnDateSetListener date;
@@ -135,14 +134,12 @@ public class CreateBill extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                getWindow().setExitTransition(new Slide());
-                this.finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == android.R.id.home) {
+            getWindow().setExitTransition(new Slide());
+            this.finish();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     // get and save the fields to the server
@@ -159,7 +156,7 @@ public class CreateBill extends AppCompatActivity {
         billNameField = findViewById(R.id.create_bill_name);
 
 
-        categoryField = findViewById(R.id.create_bill_category);
+        Spinner categoryField = findViewById(R.id.create_bill_category);
         category = categoryField.getSelectedItem().toString();
 
 
@@ -172,7 +169,7 @@ public class CreateBill extends AppCompatActivity {
         String[] split_type = getResources().getStringArray(R.array.bill_split_type);
 
 
-        recurrenceField = findViewById(R.id.create_bill_recurrence);
+        Spinner recurrenceField = findViewById(R.id.create_bill_recurrence);
         recurrence = recurrenceField.getSelectedItem().toString();
 
 //        SimpleDateFormat sdf = new SimpleDateFormat(reminderDateField.getText().toString());

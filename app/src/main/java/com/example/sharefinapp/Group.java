@@ -1,16 +1,19 @@
 package com.example.sharefinapp;
 
+import java.util.Date;
 import java.util.List;
 
 public class Group {
     private String groupName;
     private List<String> groupUserIDs;
     private String groupID;
+    private Date createDate;
 
-    public Group(String groupName, List<String> groupUserIDs,String groupID) {
+    public Group(String groupName, List<String> groupUserIDs,String groupID, Date createDate) {
         this.groupName = groupName;
         this.groupUserIDs = groupUserIDs;
         this.groupID = groupID;
+        this.createDate = createDate;
     }
     // for firestore compatibility
     public Group() {}
@@ -38,4 +41,13 @@ public class Group {
     public void setGroupID(String groupID) {
         this.groupID = groupID;
     }
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
 }

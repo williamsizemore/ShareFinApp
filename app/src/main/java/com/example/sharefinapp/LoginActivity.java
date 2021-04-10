@@ -24,12 +24,12 @@ public class LoginActivity extends AppCompatActivity {
 
     //    private LoginViewModel loginViewModel;
     private static final int RC_SIGN_IN = 123;
-    private Button startLogin;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        startLogin = findViewById(R.id.startLoginButton);
+        Button startLogin = findViewById(R.id.startLoginButton);
 
         startLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,7 +65,7 @@ public class LoginActivity extends AppCompatActivity {
             // if sign-in was successful
             if (resultCode == RESULT_OK)
             {   Log.v("isNewUser", String.valueOf(response.isNewUser()));
-                if (response.isNewUser() == true)
+                if (response.isNewUser())
                 {
                     addNewUserData();   // if its a new user, then add their info in the database
                 }

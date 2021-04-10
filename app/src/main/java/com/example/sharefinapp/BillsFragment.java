@@ -1,14 +1,15 @@
 package com.example.sharefinapp;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -29,7 +29,7 @@ import java.util.List;
 
 import static android.content.ContentValues.TAG;
 
-public class BillsFragment extends Fragment {
+public class BillsFragment extends Fragment  {
     private FirestoreRecyclerAdapter<Bill, BillViewHolder> billAdapter;
     private final ArrayList<Group> associatedGroups = new ArrayList<>();
     private  ViewGroup viewGroup;
@@ -73,26 +73,34 @@ public class BillsFragment extends Fragment {
         for (int i = 0; i < associatedGroups.size(); i++)
             associatedGroupIDs.add(associatedGroups.get(i).getGroupID());
 
-        Query query = FirebaseFirestore.getInstance().collection("bills").whereIn("groupID", associatedGroupIDs); //todo update query to include just the users stuff
-        FirestoreRecyclerOptions<Bill> options = new FirestoreRecyclerOptions.Builder<Bill>().setQuery(query, Bill.class).build();
+        Query query;
+        FirestoreRecyclerOptions<Bill> options;
+        if (!associatedGroupIDs.isEmpty()) {
+            query = FirebaseFirestore.getInstance().collection("bills").whereIn("groupID", associatedGroupIDs).orderBy("createDate", Query.Direction.DESCENDING); //todo update query to include just the users stuff
 
-        billAdapter = new FirestoreRecyclerAdapter<Bill, BillViewHolder>(options) {
-            @Override
-            protected void onBindViewHolder(@NonNull BillViewHolder billViewHolder, int i, @NonNull Bill bill) {
-                billViewHolder.bind(bill);
-            }
+            options = new FirestoreRecyclerOptions.Builder<Bill>().setQuery(query, Bill.class).build();
 
-            @NonNull
-            @Override
-            public BillViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.bill_item_layout, parent, false);
-                return new BillViewHolder(view);
-            }
-        };
-        recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL));
-        recyclerView.setAdapter(billAdapter);
+            billAdapter = new FirestoreRecyclerAdapter<Bill, BillViewHolder>(options) {
+                @Override
+                protected void onBindViewHolder(@NonNull BillViewHolder billViewHolder, int i, @NonNull Bill bill) {
+                    billViewHolder.bind(bill);
+                }
+
+                @NonNull
+                @Override
+                public BillViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                    View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.bill_item_layout, parent, false);
+
+                    return new BillViewHolder(view);
+                }
+            };
+            recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL));
+            recyclerView.setAdapter(billAdapter);
+            billAdapter.startListening();
+
+        }
         progressBar.setVisibility(View.GONE);
-        billAdapter.startListening();
+
     }
 
     @Override
@@ -141,9 +149,9 @@ public class BillsFragment extends Fragment {
     /*
         Bill View holder to display each bill in the recycler view
      */
-    private class BillViewHolder extends RecyclerView.ViewHolder {
+    private class BillViewHolder extends RecyclerView.ViewHolder  {
         private final View view;
-
+        private Bill bill;
         public BillViewHolder(@NonNull View itemView) {
             super(itemView);
             view = itemView;
@@ -151,6 +159,7 @@ public class BillsFragment extends Fragment {
 
         @SuppressLint("SetTextI18n")
         void bind(Bill bill) {
+            this.bill = bill;
             TextView billName, amount, userOwes, groupName;
 
             billName = view.findViewById(R.id.bill_item_name);
@@ -168,7 +177,20 @@ public class BillsFragment extends Fragment {
             groupName.setText("Group: " + group_name);
 
             userOwes.setText("You owe $" + bill.getBillSplit().get(DBManager.getInstance().getCurrentUserEmail()));
+
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.v("test Bill Item clicked: ", " opening " + bill.getName());
+                    Intent billIntent = new Intent(getContext(),BillView.class);
+                    billIntent.putExtra("billID",bill.getBillID());
+                    startActivity(billIntent);
+                }
+            });
         }
+
+
     }
+
 
 }

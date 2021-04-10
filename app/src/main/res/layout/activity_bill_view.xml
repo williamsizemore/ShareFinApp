@@ -67,7 +67,6 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical|end"
         android:text="Associated Group"
-        android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_anchor="@+id/app_bar"
         app:layout_anchorGravity="center" />

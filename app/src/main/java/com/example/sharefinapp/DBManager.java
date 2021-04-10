@@ -5,27 +5,19 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.TaskCompletionSource;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.*;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 public class DBManager extends AppCompatActivity {
-    private final FirebaseAuth fbAuth;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final FirebaseUser user;
     public static final String users_collection = "users";
@@ -40,7 +32,7 @@ public class DBManager extends AppCompatActivity {
 
     DBManager() {
         this.user = FirebaseAuth.getInstance().getCurrentUser();
-        fbAuth = FirebaseAuth.getInstance();
+        FirebaseAuth fbAuth = FirebaseAuth.getInstance();
     }
 
     public FirebaseUser getCurrentUser() {
@@ -50,21 +42,23 @@ public class DBManager extends AppCompatActivity {
     public User getUser(String userEmail)
     {
         User user = new User();
-        db.collection("users").whereEqualTo("userEmail",userEmail).limit(1).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        Log.v("test getUser() called", "created user object, starting query");
+        db.collection("users").whereEqualTo("userEmail",userEmail).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 user.setUserID(queryDocumentSnapshots.toObjects(User.class).get(0).getUserID());
                 user.setUserEmail(queryDocumentSnapshots.toObjects(User.class).get(0).getUserEmail());
                 user.setDisplayName(queryDocumentSnapshots.toObjects(User.class).get(0).getDisplayName());
+                Log.v("test getting user of userID: ", user.getUserID());
             }
         });
         while (user == null) {
             try {
-                user.wait(100);
+                wait(100);
             }
             catch (Exception e)
             {
-                Log.e("UserID is Empty", e.getStackTrace().toString());
+                Log.e("test UserID is Empty", e.getStackTrace().toString());
             }
         }
         return user;
@@ -76,7 +70,7 @@ public class DBManager extends AppCompatActivity {
         while(!query.isComplete());
 
         userList.forEach(x -> query.getResult().toObjects(User.class));
-        Log.v("getUsers - attempting to add User objects: ", userList.toArray().toString());
+        Log.v(" test getUsers - attempting to add User objects: ", userList.toArray().toString());
 
         return userList;
     }
@@ -109,7 +103,7 @@ public class DBManager extends AppCompatActivity {
     public String generateKey(String collectionPath)
     {
         String key = db.collection(collectionPath).document().getId();
-        Log.v("id generation", key);
+        Log.v("test id generation", key);
         return key;
 
     }
@@ -156,7 +150,7 @@ public class DBManager extends AppCompatActivity {
                     }
                 }
                 else
-                    Log.d("getGroups Query", String.valueOf(task.getException()));
+                    Log.d("test getGroups Query", String.valueOf(task.getException()));
             }
         });
         return objects;

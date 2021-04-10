@@ -20,7 +20,6 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -59,7 +58,7 @@ public class GroupFragment extends Fragment {
         RecyclerView recyclerView = viewGroup.findViewById(R.id.group_recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        Query query = FirebaseFirestore.getInstance().collection("groups").whereArrayContains("groupUserIDs",DBManager.getInstance().getCurrentUserID());
+        Query query = FirebaseFirestore.getInstance().collection("groups").whereArrayContains("groupUserIDs",DBManager.getInstance().getCurrentUserID()).orderBy("createDate", Query.Direction.DESCENDING);
 
 
         FirestoreRecyclerOptions<Group> options = new FirestoreRecyclerOptions.Builder<Group>().setQuery(query, Group.class).build();
@@ -92,15 +91,16 @@ public class GroupFragment extends Fragment {
                 for (DocumentSnapshot ds: queryDocumentSnapshots) {
                     associatedGroups.add(ds.toObject(Group.class));
                 }
-                if (associatedGroups == null)
-                    while (associatedGroups == null)
-                        try {
-                            wait(100);
-                        } catch (Exception e)
-                        {
-                            Log.e(TAG, e.getStackTrace().toString());
-                        }
-                else  getAssociatedBills();
+//                if (associatedGroups == null)
+//                    while (associatedGroups == null)
+//                        try {
+//                            wait(100);
+//                        } catch (Exception e)
+//                        {
+//                            Log.e(TAG, e.getStackTrace().toString());
+//                        }
+//                else
+                    getAssociatedBills();
 
 
             }
@@ -112,16 +112,20 @@ public class GroupFragment extends Fragment {
         List<String> groupIDs = new ArrayList<>();
         for (int i=0;i< associatedGroups.size();i++)
             groupIDs.add(associatedGroups.get(i).getGroupID());
-            DBManager.getInstance().getDb().collection("bills").whereIn("groupID", groupIDs).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                for (DocumentSnapshot ds: queryDocumentSnapshots) {
-                    associatedBills.add(ds.toObject(Bill.class));
-                }
-                setupRecycler();
-            }
+            if (!groupIDs.isEmpty()) {
+                DBManager.getInstance().getDb().collection("bills").whereIn("groupID", groupIDs).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        for (DocumentSnapshot ds : queryDocumentSnapshots) {
+                            associatedBills.add(ds.toObject(Bill.class));
+                        }
+                        setupRecycler();
+                    }
 
-        });
+                });
+            }
+            else
+                setupRecycler();
     }
 
     @Override
