@@ -19,6 +19,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -30,7 +31,6 @@ public class MakePayment extends AppCompatActivity {
     private DocumentReference documentReference;   // reference ID for the bill document in the database to update
     private EditText paymentAmount, description;
     private EditText paymentDateField;
-    private Payment payment;
     private DatePickerDialog.OnDateSetListener date;
     private double amountDue;
 
@@ -99,16 +99,36 @@ public class MakePayment extends AppCompatActivity {
         TextView billName = findViewById(R.id.make_payment_bill_name);
         billName.setText(bill.getName());
 
-        TextView amountOwed = findViewById(R.id.make_payment_amount_owed);
-        amountDue = bill.getBillSplit().get(DBManager.getInstance().getCurrentUserID());
+        DBManager.getInstance().getDb().collection("payments").whereEqualTo("billID",billID).whereEqualTo("userID",DBManager.getInstance().getCurrentUserID()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                ArrayList<Payment> payments = new ArrayList<>();
+                for (DocumentSnapshot ds: queryDocumentSnapshots)
+                    payments.add(ds.toObject(Payment.class));
 
-        DecimalFormat df = new DecimalFormat("###.##");
-        amountOwed.setText("You Owe $" + df.format(amountDue));
+                TextView amountOwed = findViewById(R.id.make_payment_amount_owed);
+                double amountPaid = 0;
+
+                if (payments.isEmpty()) {
+                    amountDue = bill.getBillSplit().get(DBManager.getInstance().getCurrentUserID());
+                }
+                else {
+                    for (int i=0; i < payments.size(); i++)
+                        amountPaid += payments.get(i).getAmountPaid();
+                    amountDue = bill.getBillSplit().get(DBManager.getInstance().getCurrentUserID()) - amountPaid;
+                }
+
+                DecimalFormat df = new DecimalFormat("###.##");
+                amountOwed.setText("You Owe $" + df.format(amountDue));
+            }
+        });
+
+
     }
 
     public void savePayment(View view) {
 //        Date paymentDate = new Date();
-        payment = new Payment();
+        Payment payment = new Payment();
 
         if (isValidFields())
         {
@@ -128,7 +148,7 @@ public class MakePayment extends AppCompatActivity {
             payment.setPaymentID(DBManager.getInstance().generateKey("payments"));
 
             /* make the call to insert the payment data to the table */
-            DBManager.getInstance().insertData("payments",payment);
+            DBManager.getInstance().insertData("payments", payment);
             Log.v("test savePayment","saving the payment");
 
             /* update the bill amount */

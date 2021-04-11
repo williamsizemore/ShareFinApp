@@ -1,6 +1,7 @@
 package com.example.sharefinapp;
 
 import android.annotation.SuppressLint;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -8,7 +9,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,9 +25,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -33,7 +39,7 @@ import static android.content.ContentValues.TAG;
 
 public class BillsFragment extends Fragment  {
     private FirestoreRecyclerAdapter<Bill, BillViewHolder> billAdapter;
-    private final ArrayList<Group> associatedGroups = new ArrayList<>();
+    private ArrayList<Group> associatedGroups;// = new ArrayList<>();
     private  ViewGroup viewGroup;
     private ProgressBar progressBar;
 
@@ -44,6 +50,8 @@ public class BillsFragment extends Fragment  {
         viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_bills, container, false);
         progressBar = viewGroup.findViewById(R.id.billFragmentProgressBar);
         getAssociatedGroups();
+
+
         return viewGroup;
     }
 
@@ -51,7 +59,7 @@ public class BillsFragment extends Fragment  {
          Query to get the groupIDs associated with the current user
      */
     private void getAssociatedGroups()
-    {
+    {   associatedGroups = new ArrayList<>();
         progressBar.setVisibility(View.VISIBLE);
         FirebaseFirestore.getInstance().collection("groups").whereArrayContains("groupUserIDs", DBManager.getInstance().getCurrentUserID()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -61,7 +69,6 @@ public class BillsFragment extends Fragment  {
                 populateBills();    //once the groups are loaded, populate the bills using the provided group data
             }
         });
-
     }
 
     /*
@@ -78,7 +85,7 @@ public class BillsFragment extends Fragment  {
         Query query;
         FirestoreRecyclerOptions<Bill> options;
         if (!associatedGroupIDs.isEmpty()) {
-            query = FirebaseFirestore.getInstance().collection("bills").whereIn("groupID", associatedGroupIDs).orderBy("createDate", Query.Direction.DESCENDING); //todo update query to include just the users stuff
+            query = FirebaseFirestore.getInstance().collection("bills").whereIn("groupID", associatedGroupIDs).orderBy("createDate", Query.Direction.DESCENDING);
 
             options = new FirestoreRecyclerOptions.Builder<Bill>().setQuery(query, Bill.class).build();
 
@@ -133,7 +140,8 @@ public class BillsFragment extends Fragment  {
             }
         }
         else
-            billAdapter.startListening();
+            getAssociatedGroups();
+//            billAdapter.startListening();
     }
     @Override
     public void onStop() {
@@ -148,30 +156,68 @@ public class BillsFragment extends Fragment  {
 
     }
 
-    /*
+    /***************************************************************
         Bill View holder to display each bill in the recycler view
-     */
-    private class BillViewHolder extends RecyclerView.ViewHolder  {
+     **************************************************************/
+    private class BillViewHolder extends RecyclerView.ViewHolder {
         private final View view;
+        private ArrayList<Payment> payments;
+
 
         public BillViewHolder(@NonNull View itemView) {
             super(itemView);
             view = itemView;
+
         }
 
         @SuppressLint("SetTextI18n")
         void bind(Bill bill) {
+            DecimalFormat df = new DecimalFormat("###.##");
+            payments = new ArrayList<>();
+            DBManager.getInstance().getDb().collection("payments").whereEqualTo("billID",bill.getBillID()).whereEqualTo("userID",DBManager.getInstance().getCurrentUserID()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @Override
+                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                    for (DocumentSnapshot ds : queryDocumentSnapshots)
+                        payments.add(ds.toObject(Payment.class));
 
-            TextView billName, amount, userOwes, groupName;
+                    TextView userOwes = view.findViewById(R.id.bill_item_user_owes);
+                    double userOwesAmount = 0;
+                    // if there are no payments, then use the assigned amount the user owes
+                    if (payments.isEmpty())
+                    {
+                        userOwesAmount = bill.getBillSplit().get(DBManager.getInstance().getCurrentUserID());
+                        Log.v("test billBinder calculating amountPaid: ", String.format("payments empty, assigning %s", bill.getBillSplit().get(DBManager.getInstance().getCurrentUserID())));
+                    }
+                    // otherwise add up the total paid so far, and get what amount is remaining
+                    else {
+                        double amountPaid = 0;
+                        for (int i=0; i < payments.size(); i++) {
+                            Log.v("test billBinder calculating amountPaid: ", String.format("amountPaid %s ; adding %s", amountPaid, payments.get(i).getAmountPaid()));
+                            amountPaid += payments.get(i).getAmountPaid();
+                        }
+                        userOwesAmount = bill.getBillSplit().get(DBManager.getInstance().getCurrentUserID()) - amountPaid;
+                    }
+                    if (userOwesAmount  > 0) {
+                        userOwes.setText(String.format("You owe $%s", df.format(userOwesAmount)));
+                        userOwes.setTextColor(Color.RED);
+                    }
+                    else {
+                        userOwes.setText("Paid!");
+                        Log.v("test billBinder setting text", String.format("paid with an amount of %s", userOwesAmount));
+                        userOwes.setTextColor(Color.GREEN);
+                    }
+                }
+            });
+            TextView billName, amount, groupName;
 
             billName = view.findViewById(R.id.bill_item_name);
             amount = view.findViewById(R.id.bill_item_amount);
-            userOwes = view.findViewById(R.id.bill_item_user_owes);
+
             groupName = view.findViewById(R.id.bill_item_group_name);
 
             billName.setText(bill.getName());
 
-            DecimalFormat df = new DecimalFormat("###.##");
+
             amount.setText("$" + df.format(bill.getAmountDue()));
 
             String group_name = "";
@@ -180,26 +226,16 @@ public class BillsFragment extends Fragment  {
                     group_name = associatedGroups.get(i).getGroupName();
             groupName.setText("Group: " + group_name);
 
-            if (bill.getBillSplit().get(DBManager.getInstance().getCurrentUserID())  > 0) {
-                userOwes.setText("You owe $" + bill.getBillSplit().get(DBManager.getInstance().getCurrentUserID()));
-                userOwes.setTextColor(Color.RED);
-            }
-            else {
-                userOwes.setText("Paid!");
-                userOwes.setTextColor(Color.GREEN);
-            }
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.v("test Bill Item clicked: ", " opening " + bill.getName());
-                    /* open bill view to see payment history - NOT IMPLEMENTED */
+
+            view.setOnClickListener(v -> {
+                Log.v("test Bill Item clicked: ", " opening " + bill.getName());
+                /* open bill view to see payment history - NOT IMPLEMENTED */
 //                    Intent billIntent = new Intent(getContext(),BillView.class);
 //                    billIntent.putExtra("billID",bill.getBillID());
 //                    startActivity(billIntent);
-                    Intent makePaymentIntent = new Intent(getContext(),MakePayment.class);
-                    makePaymentIntent.putExtra("billID",bill.getBillID());
-                    startActivity(makePaymentIntent);
-                }
+                Intent makePaymentIntent = new Intent(getContext(),MakePayment.class);
+                makePaymentIntent.putExtra("billID",bill.getBillID());
+                startActivity(makePaymentIntent);
             });
         }
     }

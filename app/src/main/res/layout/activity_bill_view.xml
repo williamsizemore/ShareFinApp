@@ -45,7 +45,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                app:srcCompat="@android:drawable/ic_menu_edit" />
+                app:srcCompat="@android:drawable/ic_menu_edit"
+                android:contentDescription="TODO" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
@@ -59,7 +60,8 @@
         android:layout_margin="@dimen/fab_margin"
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"
-        app:srcCompat="@drawable/addbill_icon" />
+        app:srcCompat="@drawable/addbill_icon"
+        android:contentDescription="@string/temp" />
 
     <TextView
         android:id="@+id/bill_view_group_name"
@@ -69,6 +71,7 @@
         android:text="Associated Group"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_anchor="@+id/app_bar"
-        app:layout_anchorGravity="center" />
+        app:layout_anchorGravity="center"
+        tools:ignore="HardcodedText" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

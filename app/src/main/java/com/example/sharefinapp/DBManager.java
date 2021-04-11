@@ -54,15 +54,15 @@ public class DBManager extends AppCompatActivity {
                 Log.v("test getting user of userID: ", user.getUserID());
             }
         });
-        while (user == null) {
-            try {
-                wait(100);
-            }
-            catch (Exception e)
-            {
-                Log.e("test UserID is Empty", e.getStackTrace().toString());
-            }
-        }
+//        while (user == null) {
+//            try {
+//                wait(100);
+//            }
+//            catch (Exception e)
+//            {
+//                Log.e("test UserID is Empty", e.getStackTrace().toString());
+//            }
+//        }
         return user;
     }
 

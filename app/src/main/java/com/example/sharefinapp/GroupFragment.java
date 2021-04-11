@@ -1,5 +1,7 @@
 package com.example.sharefinapp;
 
+import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -172,8 +174,10 @@ public class GroupFragment extends Fragment {
             view = itemView;
         }
 
+        @SuppressLint("SetTextI18n")
         void bind(Group group)
         {
+            DecimalFormat df = new DecimalFormat("###.##");
             TextView groupName = view.findViewById(R.id.group_item);
             groupName.setText(group.getGroupName());
 
@@ -186,8 +190,27 @@ public class GroupFragment extends Fragment {
                     groupAmount += associatedBills.get(i).getAmountDue();
                 }
             }
-            DecimalFormat df = new DecimalFormat("###.##");
+            Log.v("test groupBinder", String.format("groupAmount: %s",df.format(groupAmount)));
+
+
             groupUser.setText(String.format("Total Amounts: $%s", df.format(groupAmount)));
+
+            double groupAmountPaid = 0.00;
+            for (int i=0; i< associatedBills.size(); i++) {
+                if (group.getGroupID().equals(associatedBills.get(i).getGroupID()))
+                {
+                    groupAmountPaid += associatedBills.get(i).getAmountPaid();
+                }
+            }
+            TextView groupAmountPaidView = view.findViewById(R.id.group_item_amount_remaining);
+            if (groupAmountPaid < groupAmount) {
+                groupAmountPaidView.setText(String.format("Total Paid: $%s",df.format(groupAmountPaid)));
+                groupAmountPaidView.setTextColor(Color.RED);
+            }
+            else {
+                groupAmountPaidView.setText("All Paid Up!");
+                groupAmountPaidView.setTextColor(Color.GREEN);
+            }
 
             TextView groupUserCount = view.findViewById(R.id.group_item_member_count);
             groupUserCount.setText(String.format(Locale.ENGLISH, "%d members", group.getGroupUserIDs().size()));

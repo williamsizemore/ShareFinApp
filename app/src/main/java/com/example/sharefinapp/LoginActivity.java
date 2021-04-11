@@ -31,13 +31,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         Button startLogin = findViewById(R.id.startLoginButton);
 
-        startLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view)
-            {
-                setSignOnIntent();
-            }
-        });
+        startLogin.setOnClickListener(view -> setSignOnIntent());
         setSignOnIntent();
 
 
@@ -65,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
             // if sign-in was successful
             if (resultCode == RESULT_OK)
             {   Log.v("isNewUser", String.valueOf(response.isNewUser()));
-                if (response.isNewUser())
+                if (response.isNewUser() == true)
                 {
                     addNewUserData();   // if its a new user, then add their info in the database
                 }
@@ -87,16 +81,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // sign out the user and exit the application
-    public void signOut()
+    public void signOut(View view)
     {
         AuthUI.getInstance().signOut(this)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Toast toast = Toast.makeText(getApplicationContext(),"Signed out. Come back Soon!", Toast.LENGTH_LONG);
-                        toast.show();
-                        finishAndRemoveTask();  // close the app after signing out
-                    }
+                .addOnCompleteListener(task -> {
+                    Toast toast = Toast.makeText(getApplicationContext(),"Signed out. Come back Soon!", Toast.LENGTH_LONG);
+                    toast.show();
+                    finishAndRemoveTask();  // close the app after signing out
                 });
     }
 

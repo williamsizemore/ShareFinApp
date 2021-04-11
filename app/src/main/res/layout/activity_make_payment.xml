@@ -85,7 +85,8 @@
         android:text="Make Payment"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/make_payment_calendar" />
 
     <EditText
         android:id="@+id/make_payment_calendar"
@@ -117,5 +118,19 @@
         app:layout_constraintHorizontal_bias="0.409"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/make_payment_description" />
+
+    <ImageButton
+        android:id="@+id/make_payment_schedule_icon"
+        android:layout_width="38dp"
+        android:layout_height="40dp"
+        android:background="@color/fui_transparent"
+        android:onClick="setPaymentDate"
+        app:layout_constraintBottom_toBottomOf="@+id/make_payment_calendar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/make_payment_calendar"
+        app:layout_constraintTop_toTopOf="@+id/make_payment_calendar"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/schedule_icon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

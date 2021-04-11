@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -143,6 +145,7 @@ public class CreateBill extends AppCompatActivity {
     }
 
     // get and save the fields to the server
+    @SuppressLint("IntentReset")
     public void onBillSave(View view) throws Exception
     {
         Log.v("Bill Save","Attempting to create and save bill");
@@ -247,18 +250,20 @@ public class CreateBill extends AppCompatActivity {
 
             DBManager.getInstance().insertData("bills",bill);
 
-            /* create an implicit intent to add the event to the calendar */
-            Intent calendarIntent = new Intent(Intent.ACTION_INSERT, CalendarContract.Events.CONTENT_URI);
-            Calendar calendarEvent = Calendar.getInstance();
-            calendarIntent.setType("vnd.android.cursor.item/event");
-            calendarIntent.putExtra("beginTime",calendar.getTimeInMillis());
-            calendarIntent.putExtra("endTime",calendar.getTimeInMillis() + 60 * 60 * 1000);
-            calendarIntent.putExtra("allDay",true);
+            Switch setReminderBool = findViewById(R.id.set_reminder_bool);
+            if (setReminderBool.isChecked()) {
+                /* create an implicit intent to add the event to the calendar */
+                @SuppressLint("IntentReset") Intent calendarIntent = new Intent(Intent.ACTION_INSERT, CalendarContract.Events.CONTENT_URI);
+                Calendar calendarEvent = Calendar.getInstance();
+                calendarIntent.setType("vnd.android.cursor.item/event");
+                calendarIntent.putExtra("beginTime", calendar.getTimeInMillis());
+                calendarIntent.putExtra("endTime", calendar.getTimeInMillis() + 60 * 60 * 1000);
+                calendarIntent.putExtra("allDay", true);
 //            calendarIntent.putExtra("rule","FREQ=" + recurrence.toUpperCase());
-            calendarIntent.putExtra("title",billName + " due");
-            startActivityForResult(calendarIntent, RESULT_OK);
-
-            Toast.makeText(this, "Success!", Toast.LENGTH_LONG);
+                calendarIntent.putExtra("title", billName + " due");
+                startActivityForResult(calendarIntent, RESULT_OK);
+            }
+            Toast.makeText(this, "Success!", Toast.LENGTH_SHORT).show();
             finish();
         }
         else Log.v("onBillSave","Cancelled save attempt, valid data no entered");

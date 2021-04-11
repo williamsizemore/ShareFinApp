@@ -9,7 +9,9 @@
         android:roundIcon="@mipmap/sf_launcher_icon"
         android:supportsRtl="true"
         android:theme="@style/Theme.ShareFinApp">
-        <activity android:name=".MakePayment"></activity>
+
+
+        <activity android:name=".MakePayment" />
         <activity
             android:name=".BillView"
             android:label="@string/title_activity_bill_view"

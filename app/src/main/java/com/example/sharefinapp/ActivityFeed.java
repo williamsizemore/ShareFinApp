@@ -1,12 +1,16 @@
 package com.example.sharefinapp;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import com.google.android.material.tabs.TabLayout;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
@@ -16,6 +20,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
+import android.widget.Toast;
 
 //import com.example.sharefinapp.ui.main.SectionsPagerAdapter;
 /* reference for FAB buttons: https://stackoverflow.com/questions/30699302/android-design-support-library-expandable-floating-action-buttonfab-menu */
@@ -29,6 +34,8 @@ public class ActivityFeed extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
+        TextView title = findViewById(R.id.title);
+        title.setText("Welcome, " + DBManager.getInstance().getCurrentUserDisplayName());
 
         /* setup the TabLayout tabs */
         FragmentManager fm = getSupportFragmentManager();
@@ -87,11 +94,9 @@ public class ActivityFeed extends AppCompatActivity implements View.OnClickListe
         addGroupFAB.setOnClickListener(this);
         addBillFAB.setOnClickListener(this);
 
-
-
-
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick (View v) {
         int id = v.getId();
@@ -150,6 +155,25 @@ public class ActivityFeed extends AppCompatActivity implements View.OnClickListe
         addGroupFAB.setClickable(false);
         addBillFAB.setClickable(false);
         isFABOpen = false;
+    }
+
+    // sign out the user and exit the application
+    public void signOut(View view)
+    {
+        AuthUI.getInstance().signOut(this)
+                .addOnCompleteListener(task -> {
+                    Toast toast = Toast.makeText(getApplicationContext(),"Signed out. Come back Soon!", Toast.LENGTH_LONG);
+                    toast.show();
+                    finishAndRemoveTask();  // close the app after signing out
+                });
+    }
+
+    /**
+     *  NOT IMPLEMENTED YET
+     * @param view
+     */
+    public void search(View view){
+        Toast.makeText(this, "Search Function Not Implemented Yet",Toast.LENGTH_SHORT).show();
     }
 
 

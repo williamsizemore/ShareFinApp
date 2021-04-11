@@ -15,16 +15,45 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/title"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <!-- Logout button -->
+            <ImageButton
+            android:id="@+id/imageButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:minHeight="?actionBarSize"
-            android:padding="@dimen/appbar_padding"
-            android:text="@string/app_name"
-            android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title" />
+            android:layout_height="50dp"
+            app:srcCompat="@drawable/logout_icon"
+            android:layout_weight="3"
+            android:background="@android:color/transparent"
+            android:onClick="signOut"/>
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_weight="15"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:minHeight="?actionBarSize"
+                android:padding="@dimen/appbar_padding"
+                android:text="@string/app_name"
+                android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title" />
+
+            <ImageView
+                android:id="@+id/search_view"
+                android:layout_width="0dp"
+                android:layout_gravity="end"
+                android:layout_weight="3"
+                app:srcCompat="@drawable/search_icon"
+                android:onClick="search"
+                android:background="@android:color/transparent"
+                android:layout_height="50dp"
+                 />
+
+
+
+
+        </LinearLayout>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
@@ -48,6 +77,8 @@
 
             </com.google.android.material.tabs.TabItem>
         </com.google.android.material.tabs.TabLayout>
+
+
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -75,7 +106,8 @@
         android:text="Create New Bill"
         android:visibility="invisible"
         app:layout_constraintEnd_toStartOf="@+id/fabAddBill"
-        app:layout_constraintTop_toTopOf="@+id/fabAddBill" />
+        app:layout_constraintTop_toTopOf="@+id/fabAddBill"
+        tools:ignore="HardcodedText" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddBill"
@@ -89,7 +121,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/addbill_icon"
-        android:contentDescription="TODO" />
+        android:contentDescription="Create Bill" />
 
 
     <!-- Add Group layout -->
@@ -116,7 +148,8 @@
         app:fabSize="mini"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fabAddBill"
-        app:srcCompat="@drawable/addgroup_icon" />
+        app:srcCompat="@drawable/addgroup_icon"
+        android:contentDescription="Add Group" />
 
 
     <!-- Add button layout -->
@@ -132,7 +165,8 @@
         app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@android:drawable/ic_input_add"
+        android:contentDescription="Show Add Buttons" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
