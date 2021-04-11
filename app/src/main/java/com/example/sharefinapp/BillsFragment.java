@@ -2,6 +2,7 @@ package com.example.sharefinapp;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +25,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -151,7 +153,7 @@ public class BillsFragment extends Fragment  {
      */
     private class BillViewHolder extends RecyclerView.ViewHolder  {
         private final View view;
-        private Bill bill;
+
         public BillViewHolder(@NonNull View itemView) {
             super(itemView);
             view = itemView;
@@ -159,7 +161,7 @@ public class BillsFragment extends Fragment  {
 
         @SuppressLint("SetTextI18n")
         void bind(Bill bill) {
-            this.bill = bill;
+
             TextView billName, amount, userOwes, groupName;
 
             billName = view.findViewById(R.id.bill_item_name);
@@ -168,7 +170,9 @@ public class BillsFragment extends Fragment  {
             groupName = view.findViewById(R.id.bill_item_group_name);
 
             billName.setText(bill.getName());
-            amount.setText("$" + bill.getAmountDue());
+
+            DecimalFormat df = new DecimalFormat("###.##");
+            amount.setText("$" + df.format(bill.getAmountDue()));
 
             String group_name = "";
             for (int i=0;i< associatedGroups.size();i++)
@@ -176,21 +180,27 @@ public class BillsFragment extends Fragment  {
                     group_name = associatedGroups.get(i).getGroupName();
             groupName.setText("Group: " + group_name);
 
-            userOwes.setText("You owe $" + bill.getBillSplit().get(DBManager.getInstance().getCurrentUserEmail()));
-
+            if (bill.getBillSplit().get(DBManager.getInstance().getCurrentUserID())  > 0) {
+                userOwes.setText("You owe $" + bill.getBillSplit().get(DBManager.getInstance().getCurrentUserID()));
+                userOwes.setTextColor(Color.RED);
+            }
+            else {
+                userOwes.setText("Paid!");
+                userOwes.setTextColor(Color.GREEN);
+            }
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Log.v("test Bill Item clicked: ", " opening " + bill.getName());
-                    Intent billIntent = new Intent(getContext(),BillView.class);
-                    billIntent.putExtra("billID",bill.getBillID());
-                    startActivity(billIntent);
+                    /* open bill view to see payment history - NOT IMPLEMENTED */
+//                    Intent billIntent = new Intent(getContext(),BillView.class);
+//                    billIntent.putExtra("billID",bill.getBillID());
+//                    startActivity(billIntent);
+                    Intent makePaymentIntent = new Intent(getContext(),MakePayment.class);
+                    makePaymentIntent.putExtra("billID",bill.getBillID());
+                    startActivity(makePaymentIntent);
                 }
             });
         }
-
-
     }
-
-
 }

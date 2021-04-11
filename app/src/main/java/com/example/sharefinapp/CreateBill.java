@@ -186,37 +186,37 @@ public class CreateBill extends AppCompatActivity {
             Log.v("validateFields: users", String.valueOf(users.size()));
             if (splitType.equals(split_type[0]))
             {
-                billSplit.put(users.get(0).getUserEmail(),Double.parseDouble(user1amount.getText().toString()));    // put user1's split of the bill into the hashmap
-                billSplit.put(users.get(1).getUserEmail(), Double.parseDouble((user2amount.getText().toString()))); // put user2's split of the bill into the hashmap
+                billSplit.put(users.get(0).getUserID(),Double.parseDouble(user1amount.getText().toString()));    // put user1's split of the bill into the hashmap
+                billSplit.put(users.get(1).getUserID(), Double.parseDouble((user2amount.getText().toString()))); // put user2's split of the bill into the hashmap
 
                 if (user3amount.getVisibility() == View.VISIBLE)
-                    billSplit.put(users.get(2).getUserEmail(),Double.parseDouble(user3amount.getText().toString()));
+                    billSplit.put(users.get(2).getUserID(),Double.parseDouble(user3amount.getText().toString()));
                 if (user4amount.getVisibility() == View.VISIBLE)
-                    billSplit.put(users.get(3).getUserEmail(), Double.parseDouble(user4amount.getText().toString()));
+                    billSplit.put(users.get(3).getUserID(), Double.parseDouble(user4amount.getText().toString()));
                 if (user5amount.getVisibility() == View.VISIBLE)
-                    billSplit.put(users.get(4).getUserEmail(), Double.parseDouble(user5amount.getText().toString()));
+                    billSplit.put(users.get(4).getUserID(), Double.parseDouble(user5amount.getText().toString()));
             }
             // if it is based on percentages, it will need to be converted to dollar values first
             else if (splitType.equals(split_type[1]))
             {
                 double split1, split2, split3, split4, split5;
                 split1 = (Double.parseDouble(user1amount.getText().toString()) / 100) * amount;
-                billSplit.put(users.get(0).getUserEmail(),split1);
+                billSplit.put(users.get(0).getUserID(),split1);
 
                 split2 = (Double.parseDouble(user2amount.getText().toString()) / 100) * amount;
-                billSplit.put(users.get(1).getUserEmail(),split2);
+                billSplit.put(users.get(1).getUserID(),split2);
 
                 if (user3amount.getVisibility() == View.VISIBLE) {
                     split3 = (Double.parseDouble(user3amount.getText().toString()) / 100) * amount;
-                    billSplit.put(users.get(2).getUserEmail(),split3);
+                    billSplit.put(users.get(2).getUserID(),split3);
                 }
                 if (user4amount.getVisibility() == View.VISIBLE) {
                     split4 = (Double.parseDouble(user4amount.getText().toString()) / 100) * amount;
-                    billSplit.put(users.get(3).getUserEmail(),split4);
+                    billSplit.put(users.get(3).getUserID(),split4);
                 }
                 if (user5amount.getVisibility() == View.VISIBLE){
                     split5 = (Double.parseDouble(user5amount.getText().toString()) / 100) * amount;
-                    billSplit.put(users.get(4).getUserEmail(),split5);
+                    billSplit.put(users.get(4).getUserID(),split5);
                 }
             }
             billName = billNameField.getText().toString();
@@ -227,7 +227,7 @@ public class CreateBill extends AppCompatActivity {
             else
                 category = categoryField.getSelectedItem().toString();
 
-            recurrence = recurrenceField.getSelectedItem().toString();
+//            recurrence = recurrenceField.getSelectedItem().toString();
 
             // set the values of the bill
             Bill bill = new Bill();
@@ -240,19 +240,21 @@ public class CreateBill extends AppCompatActivity {
             bill.setGroupID(selectedGroup.getGroupID());
             bill.setDescription(null);
             bill.setPhotoURI(null);
-            bill.setRecurring(recurrence);
+//            bill.setRecurring(recurrence);    // recurring feature not implemented
             bill.setSplitType(splitType);
             bill.setBillSplit(billSplit);
+            bill.setBillID(DBManager.getInstance().generateKey("bills"));
 
             DBManager.getInstance().insertData("bills",bill);
-            // todo create another method to add the bill to the calendar
+
+            /* create an implicit intent to add the event to the calendar */
             Intent calendarIntent = new Intent(Intent.ACTION_INSERT, CalendarContract.Events.CONTENT_URI);
             Calendar calendarEvent = Calendar.getInstance();
             calendarIntent.setType("vnd.android.cursor.item/event");
             calendarIntent.putExtra("beginTime",calendar.getTimeInMillis());
             calendarIntent.putExtra("endTime",calendar.getTimeInMillis() + 60 * 60 * 1000);
             calendarIntent.putExtra("allDay",true);
-            calendarIntent.putExtra("rule","FREQ=" + recurrence.toUpperCase());
+//            calendarIntent.putExtra("rule","FREQ=" + recurrence.toUpperCase());
             calendarIntent.putExtra("title",billName + " due");
             startActivityForResult(calendarIntent, RESULT_OK);
 

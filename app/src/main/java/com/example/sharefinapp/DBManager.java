@@ -9,6 +9,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.*;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -63,11 +65,13 @@ public class DBManager extends AppCompatActivity {
         }
         return user;
     }
+
+    /* Not functioning correctly, needs to handle asynrchronous nature of db */
     public ArrayList<User> getUsers(List<String> userEmails){
         ArrayList<User> userList = new ArrayList<>();
 
         Task<QuerySnapshot> query = db.collection("users").whereArrayContainsAny("userEmail",userEmails).get();
-        while(!query.isComplete());
+//        while(!query.isComplete());
 
         userList.forEach(x -> query.getResult().toObjects(User.class));
         Log.v(" test getUsers - attempting to add User objects: ", userList.toArray().toString());
@@ -77,27 +81,54 @@ public class DBManager extends AppCompatActivity {
 
     public FirebaseFirestore getDb() {
         return db;
-    }   // todo potentially remove?
+    }
 
-    /*
+    /**
           Upload data with a known document ID to the FireStore database
-          @collectionPath - the collection to be added to
-          @document - the ID of the object/document for the collection
-          @data - the object to be uploaded as the document
+          @param collectionPath - the collection to be added to
+          @param document - the ID of the object/document for the collection
+          @param data - the object to be uploaded as the document
      */
     public void insertData(String collectionPath, String document, Object data)
     {
         db.collection(collectionPath).document(document).set(data);
     }
 
-    /*
+    /**
         Upload data without a known document ID to the FireStore database
-        @collectionPath - the collection to be added to
-        @data - the object to be uploaded as the document
+        @param collectionPath - the collection to be added to
+        @param data - the object to be uploaded as the document
      */
     public void insertData(String collectionPath, Object data)
     {
         db.collection(collectionPath).add(data);
+    }
+
+    /* update a data field of type String */
+    public void updateDataField(String collectionPath, DocumentReference documentReference, String field, String value)
+    {
+        db.collection(collectionPath).document(documentReference.getId()).update(field, value);
+    }
+    /* update a data field of type double */
+    public void updateDataField(String collectionPath, DocumentReference documentReference, String field, double value)
+    {
+
+        db.collection(collectionPath).document(documentReference.getId()).update(field, value).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.v("test updateDataField-double success: ","updated "+ documentReference + " " + field + " with value of " + value);
+            }
+        });
+    }
+    /* update a data field of type int */
+    public void updateDataField(String collectionPath, DocumentReference  documentReference, String field, int value)
+    {
+        db.collection(collectionPath).document(documentReference.getId()).update(field, value);
+    }
+    /* update a data field of an Object */
+    public void updateDataField(String collectionPath, DocumentReference  documentReference, String field, Object obj)
+    {
+        db.collection(collectionPath).document(documentReference.getId()).update(field, obj);
     }
 
     public String generateKey(String collectionPath)
@@ -106,6 +137,42 @@ public class DBManager extends AppCompatActivity {
         Log.v("test id generation", key);
         return key;
 
+    }
+
+    /**
+     *
+     * @param collectionPath    - name of the collection, i.e. 'users', 'groups','payments','bills'
+     * @param documentIDName    - name of the ID field, i.e. billID, groupID, userID, paymentID, etc.
+     * @param documentID        - the associated value of the document ID name
+     * @return  - returns the ID to get the specific document
+     */
+    public void getDocumentReference(String collectionPath, String documentIDName,String documentID, double amount)
+    {
+        List<String> docRef = new ArrayList<>();
+//        try {
+        db.collection(collectionPath).whereEqualTo(documentIDName, documentID).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (DocumentSnapshot ds : queryDocumentSnapshots)
+                    docRef.add(ds.getReference().toString());
+
+                while (docRef.isEmpty())
+                    Log.v("getDocumentReference"," docRef is empty: " + docRef.toString());
+//                updateDataField("bills",docRef.get(0),"amountPaid",amount);
+            }
+        });
+
+
+//        while (docRef == null || docRef.get(0).isEmpty())
+//        {
+//            getApplicationContext().wait(50);
+//        }
+//
+//        } catch (InterruptedException e)
+//        {
+//            Log.e("DB Manager - getDocumentReference: ",e.getStackTrace().toString());
+//        }
+//        return docRef.get(0);
     }
 
     public String getCurrentUserEmail()

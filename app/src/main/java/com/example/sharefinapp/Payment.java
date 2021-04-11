@@ -9,14 +9,19 @@ public class Payment {
     private Date paymentDate;
     private Date metaLoadDate;
     private String description;
+    private String billID;
+    private String userID;
 
-    public Payment(String paymentID, double amountPaid, double amountRemaining, Date paymentDate, Date metaLoadDate, String description) {
+
+    public Payment(String paymentID, double amountPaid, double amountRemaining, Date paymentDate, Date metaLoadDate, String description, String billID, String userID) {
         this.paymentID = paymentID;
         this.amountPaid = amountPaid;
         this.amountRemaining = amountRemaining;
         this.paymentDate = paymentDate;
         this.metaLoadDate = metaLoadDate;
         this.description = description;
+        this.billID = billID;
+        this.userID = userID;
     }
     public Payment() {}
 
@@ -68,4 +73,19 @@ public class Payment {
         this.description = description;
     }
 
+    public String getBillID() {
+        return billID;
+    }
+
+    public void setBillID(String billID) {
+        this.billID = billID;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
 }

@@ -2,9 +2,11 @@ package com.example.sharefinapp;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -25,7 +27,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import static android.content.ContentValues.TAG;
 
@@ -85,25 +89,12 @@ public class GroupFragment extends Fragment {
         associatedBills = new ArrayList<>();
         associatedGroups = new ArrayList<>();
         progressBar.setVisibility(View.VISIBLE);
-        DBManager.getInstance().getDb().collection("groups").whereArrayContains("groupUserIDs",DBManager.getInstance().getCurrentUserID()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                for (DocumentSnapshot ds: queryDocumentSnapshots) {
-                    associatedGroups.add(ds.toObject(Group.class));
-                }
-//                if (associatedGroups == null)
-//                    while (associatedGroups == null)
-//                        try {
-//                            wait(100);
-//                        } catch (Exception e)
-//                        {
-//                            Log.e(TAG, e.getStackTrace().toString());
-//                        }
-//                else
-                    getAssociatedBills();
-
-
+        DBManager.getInstance().getDb().collection("groups").whereArrayContains("groupUserIDs",DBManager.getInstance().getCurrentUserID()).get().addOnSuccessListener(queryDocumentSnapshots -> {
+            for (DocumentSnapshot ds: queryDocumentSnapshots) {
+                associatedGroups.add(ds.toObject(Group.class));
             }
+            getAssociatedBills();
+
         });
     }
 
@@ -113,15 +104,11 @@ public class GroupFragment extends Fragment {
         for (int i=0;i< associatedGroups.size();i++)
             groupIDs.add(associatedGroups.get(i).getGroupID());
             if (!groupIDs.isEmpty()) {
-                DBManager.getInstance().getDb().collection("bills").whereIn("groupID", groupIDs).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        for (DocumentSnapshot ds : queryDocumentSnapshots) {
-                            associatedBills.add(ds.toObject(Bill.class));
-                        }
-                        setupRecycler();
+                DBManager.getInstance().getDb().collection("bills").whereIn("groupID", groupIDs).get().addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot ds : queryDocumentSnapshots) {
+                        associatedBills.add(ds.toObject(Bill.class));
                     }
-
+                    setupRecycler();
                 });
             }
             else
@@ -139,7 +126,7 @@ public class GroupFragment extends Fragment {
             }
             catch (Exception e)
             {
-                Log.e(TAG, e.getStackTrace().toString());
+                Log.e(TAG, Arrays.toString(e.getStackTrace()));
             }
         }
         else groupAdapter.startListening();
@@ -154,7 +141,7 @@ public class GroupFragment extends Fragment {
             }
             catch (Exception e)
             {
-                Log.e(TAG, e.getStackTrace().toString());
+                Log.e(TAG, Arrays.toString(e.getStackTrace()));
             }
         }
         else
@@ -200,7 +187,10 @@ public class GroupFragment extends Fragment {
                 }
             }
             DecimalFormat df = new DecimalFormat("###.##");
-            groupUser.setText("Total Amounts: $" + df.format(groupAmount));
+            groupUser.setText(String.format("Total Amounts: $%s", df.format(groupAmount)));
+
+            TextView groupUserCount = view.findViewById(R.id.group_item_member_count);
+            groupUserCount.setText(String.format(Locale.ENGLISH, "%d members", group.getGroupUserIDs().size()));
         }
 
     }
